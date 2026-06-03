@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tosca Pipeline Generator — Azure DevOps</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Syne:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:#0b0d12;--surface:#12151d;--surface2:#181c27;
+    --border:rgba(255,255,255,0.07);--border-h:rgba(255,255,255,0.14);
+    --accent:#0078d4;--text:#dde1ec;--muted:#5e6578;--muted2:#8891a8;
+    --ok:#4ade80;--err:#f87171;--info:#60a5fa;--warn:#fbbf24;--purple:#a78bfa;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;padding:2rem 1.5rem 4rem;}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse 55% 35% at 75% 5%,rgba(0,120,212,.13) 0%,transparent 60%),
+               radial-gradient(ellipse 35% 25% at 5% 90%,rgba(80,230,255,.07) 0%,transparent 55%);}
+  .wrap{max-width:780px;margin:0 auto;position:relative;z-index:1;}
+
+  header{margin-bottom:2.5rem;display:flex;align-items:flex-start;gap:14px;}
+  .logo-icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;
+    background:linear-gradient(135deg,#0078d4,#50e6ff);
+    display:flex;align-items:center;justify-content:center;font-size:20px;}
+  h1{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;}
+  .subtitle{font-size:12px;color:var(--muted2);font-family:'DM Mono',monospace;}
+
+  /* stepper removed */
+
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+  .card.hidden{display:none;}
+  .card-title{font-size:10px;font-weight:500;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:10px;}
+  .card-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* MODE TOGGLE */
+  .mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.5rem;}
+  .mode-btn{padding:12px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--border);
+    background:var(--surface2);color:var(--muted2);font-family:'Syne',sans-serif;font-size:13px;
+    font-weight:500;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:4px;}
+  .mode-btn .mode-icon{font-size:18px;}
+  .mode-btn .mode-desc{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);}
+  .mode-btn.selected{border-color:var(--accent);background:rgba(0,120,212,.1);color:var(--text);}
+  .mode-btn.selected .mode-desc{color:var(--info);}
+  .mode-btn:hover:not(.selected){border-color:var(--border-h);}
+
+  /* FORM */
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  label{font-size:11px;color:var(--muted2);display:flex;align-items:center;gap:6px;
+    margin-bottom:6px;font-family:'DM Mono',monospace;letter-spacing:.5px;}
+  .req{color:var(--err);font-size:10px;}
+  .manual-badge{font-size:9px;padding:1px 6px;border-radius:4px;
+    background:rgba(96,165,250,.15);color:var(--info);font-family:'DM Mono',monospace;}
+  input,textarea,select{width:100%;padding:9px 13px;background:var(--surface2);
+    border:1px solid var(--border);border-radius:8px;color:var(--text);
+    font-family:'DM Mono',monospace;font-size:13px;outline:none;
+    transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,120,212,.14);}
+  input[type="password"]{letter-spacing:3px;}
+  select option{background:#1a1e28;}
+  .hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:5px;}
+
+  /* BUTTONS */
+  .btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px;}
+  button{padding:10px 20px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:500;
+    cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);
+    transition:all .15s;display:inline-flex;align-items:center;gap:8px;}
+  button:hover:not(:disabled){border-color:var(--border-h);background:#222636;}
+  button:active:not(:disabled){transform:scale(.98);}
+  button:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-accent{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn-accent:hover:not(:disabled){background:#006bbf;border-color:#006bbf;}
+  .btn-ok{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.3);color:var(--ok);}
+  .btn-ok:hover:not(:disabled){background:rgba(74,222,128,.2);}
+  .btn-run{background:rgba(0,120,212,.15);border-color:rgba(0,120,212,.4);color:var(--accent);}
+  .btn-run:hover:not(:disabled){background:rgba(0,120,212,.25);}
+
+  /* MESSAGES */
+  .msg{font-size:12px;padding:10px 14px;border-radius:8px;font-family:'DM Mono',monospace;
+    margin-top:10px;display:none;line-height:1.6;}
+  .msg.ok  {background:rgba(74,222,128,.08); border:1px solid rgba(74,222,128,.25); color:var(--ok);  display:block;}
+  .msg.err {background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--err); display:block;}
+  .msg.info{background:rgba(96,165,250,.08); border:1px solid rgba(96,165,250,.25); color:var(--info);display:block;}
+  .msg.warn{background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.25); color:var(--warn);display:block;}
+
+  /* LOG */
+  .log-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+    padding:.75rem 1rem;margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;
+    line-height:1.9;color:var(--muted2);display:none;max-height:180px;overflow-y:auto;}
+  .log-box.show{display:block;}
+  .log-ok{color:var(--ok);}.log-err{color:var(--err);}.log-info{color:var(--info);}.log-warn{color:var(--warn);}
+
+  /* YAML */
+  .yaml-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:1rem;}
+  .yaml-header{display:flex;align-items:center;justify-content:space-between;
+    padding:8px 14px;border-bottom:1px solid var(--border);
+    font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;}
+  .yaml-copy{font-size:11px;padding:4px 10px;border-radius:5px;
+    border:1px solid var(--border);background:transparent;color:var(--muted2);
+    cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s;}
+  .yaml-copy:hover{border-color:var(--border-h);color:var(--text);}
+  pre{padding:1.25rem;font-family:'DM Mono',monospace;font-size:12px;line-height:1.75;
+    color:var(--text);overflow-x:auto;max-height:480px;overflow-y:auto;white-space:pre;}
+  .y-key{color:#60a5fa;}.y-val{color:#a3e635;}.y-str{color:#fde68a;}
+  .y-sym{color:var(--muted2);}.y-com{color:var(--muted);font-style:italic;}.y-task{color:#f9a8d4;}
+
+  /* RESULT */
+  .result-card{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:1.25rem;margin-top:1rem;}
+  .result-title{font-size:13px;font-weight:500;color:var(--ok);margin-bottom:10px;}
+  .result-row{display:flex;gap:8px;align-items:baseline;margin:5px 0;font-size:12px;font-family:'DM Mono',monospace;color:var(--muted2);}
+  .result-val{color:var(--text);}
+  .result-link{color:var(--info);text-decoration:none;}
+  .result-link:hover{text-decoration:underline;}
+
+  .divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0;}
+  .spinner{display:inline-block;width:13px;height:13px;
+    border:2px solid rgba(255,255,255,.15);border-top-color:#fff;
+    border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  footer{text-align:center;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3rem;}
+
+  /* PIPELINE NAME VALIDATION */
+  .name-checking { border-color: var(--warn) !important; }
+  .name-taken    { border-color: var(--err) !important; box-shadow: 0 0 0 3px rgba(248,113,113,.15) !important; }
+  .name-ok       { border-color: var(--ok)  !important; box-shadow: 0 0 0 3px rgba(74,222,128,.12)  !important; }
+  .name-hint { font-size:11px; margin-top:5px; font-family:'DM Mono',monospace; display:none; }
+  .name-hint.show { display:block; }
+  .name-hint.ok   { color:var(--ok); }
+  .name-hint.err  { color:var(--err); }
+  .name-hint.warn { color:var(--warn); }
+
+  /* PIPELINES PANEL */
+  .panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:3rem; }
+  .panel-overlay.open { display:flex; }
+  .panel-box { background:var(--surface); border:1px solid var(--border-hover); border-radius:14px; width:min(740px,95vw); max-height:80vh; display:flex; flex-direction:column; overflow:hidden; }
+  .panel-hdr { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; border-bottom:1px solid var(--border); }
+  .panel-title { font-size:14px; font-weight:600; }
+  .panel-close { background:none; border:none; color:var(--muted2); font-size:18px; cursor:pointer; padding:2px 8px; border-radius:5px; }
+  .panel-close:hover { background:var(--surface2); color:var(--text); }
+  .panel-body { overflow-y:auto; padding:1rem 1.25rem; flex:1; }
+  .panel-search { width:100%; margin-bottom:1rem; }
+  .pipe-table { width:100%; border-collapse:collapse; font-size:12px; font-family:'DM Mono',monospace; }
+  .pipe-table th { text-align:left; font-size:10px; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); padding:6px 10px; border-bottom:1px solid var(--border); font-weight:500; }
+  .pipe-table td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text); }
+  .pipe-table tr:last-child td { border-bottom:none; }
+  .pipe-table tr:hover td { background:var(--surface2); }
+  .pipe-badge { font-size:10px; padding:3px 8px; border-radius:4px; display:inline-block; font-weight:700; letter-spacing:.3px; }
+  .pipe-badge.succeeded  { background:rgba(34,197,94,.22);  color:#16a34a; border:1px solid rgba(34,197,94,.45); text-shadow:0 0 8px rgba(34,197,94,.4); }
+  .pipe-badge.failed     { background:rgba(239,68,68,.22);  color:#dc2626; border:1px solid rgba(239,68,68,.45); text-shadow:0 0 8px rgba(239,68,68,.4); }
+  .pipe-badge.canceled   { background:rgba(107,114,128,.15); color:var(--muted2); border:1px solid rgba(107,114,128,.2); }
+  .pipe-badge.running    { background:rgba(96,165,250,.15);  color:var(--info);   border:1px solid rgba(96,165,250,.3); }
+  .pipe-badge.partial    { background:rgba(251,191,36,.18);  color:#d97706;       border:1px solid rgba(251,191,36,.35); }
+  .pipe-badge.never      { background:rgba(107,114,128,.1);  color:var(--muted);  border:1px solid rgba(107,114,128,.15); }
+  .pipe-run-btn { font-size:11px; padding:4px 12px; border-radius:5px; cursor:pointer; border:1px solid rgba(0,120,212,.35); background:rgba(0,120,212,.12); color:var(--accent); font-family:'DM Mono',monospace; transition:all .15s; white-space:nowrap; }
+  .pipe-run-btn:hover { background:rgba(0,120,212,.22); }
+  .pipe-run-btn:disabled { opacity:.35; cursor:not-allowed; }
+  .panel-load-msg { font-size:12px; font-family:'DM Mono',monospace; color:var(--muted2); text-align:center; padding:2rem 0; }
+  /* NAME AUTOCOMPLETE DROPDOWN */
+  .name-ac-wrap { position:relative; }
+  .name-ac-drop { position:absolute; left:0; right:0; top:calc(100% + 4px); background:var(--surface); border:1px solid var(--border-h); border-radius:10px; z-index:300; max-height:220px; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,.45); display:none; }
+  .name-ac-drop.open { display:block; }
+  .name-ac-item { padding:9px 14px; cursor:pointer; font-size:12px; font-family:'DM Mono',monospace; color:var(--text); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .name-ac-item:last-child { border-bottom:none; }
+  .name-ac-item:hover, .name-ac-item.active { background:var(--surface2); }
+  .name-ac-item .ac-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .name-ac-item .ac-id { font-size:10px; color:var(--muted2); white-space:nowrap; }
+  .name-ac-item .ac-exact { font-size:10px; padding:1px 6px; border-radius:3px; background:rgba(248,113,113,.18); color:var(--err); border:1px solid rgba(248,113,113,.3); white-space:nowrap; }
+  .name-ac-header { padding:6px 14px; font-size:10px; letter-spacing:.7px; text-transform:uppercase; color:var(--muted); font-weight:500; border-bottom:1px solid var(--border); }
+
+  /* NAME-TAKEN POPUP */
+  .nt-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; display:none; align-items:center; justify-content:center; padding:1rem; }
+  .nt-overlay.open { display:flex; }
+  .nt-box { background:var(--surface); border:1px solid var(--border-h); border-radius:16px; width:min(480px,95vw); padding:1.75rem; position:relative; }
+  .nt-icon { font-size:32px; margin-bottom:.75rem; }
+  .nt-title { font-size:16px; font-weight:700; margin-bottom:.4rem; }
+  .nt-sub { font-size:12px; font-family:'DM Mono',monospace; color:var(--muted2); margin-bottom:1.25rem; line-height:1.6; }
+  .nt-info { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:.75rem 1rem; margin-bottom:1.25rem; font-family:'DM Mono',monospace; font-size:12px; line-height:1.8; }
+  .nt-info span { color:var(--muted2); }
+  .nt-info strong { color:var(--text); }
+  .nt-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .nt-run-status { margin-top:1rem; font-family:'DM Mono',monospace; font-size:12px; }
+  .nt-close { position:absolute; top:1rem; right:1rem; background:none; border:none; color:var(--muted2); font-size:18px; cursor:pointer; padding:2px 8px; border-radius:5px; }
+  .nt-close:hover { background:var(--surface2); color:var(--text); }
+
+  .btn-panel { background:rgba(167,139,250,.12); border-color:rgba(167,139,250,.3); color:var(--purple); }
+  .btn-panel:hover:not(:disabled) { background:rgba(167,139,250,.2); }
+  .btn-execs { background:rgba(251,191,36,.10); border-color:rgba(251,191,36,.3); color:var(--warn); }
+  .btn-execs:hover:not(:disabled) { background:rgba(251,191,36,.2); }
+
+  /* EXEC TABLE */
+  .exec-table { width:100%; border-collapse:collapse; font-size:12px; font-family:'DM Mono',monospace; }
+  .exec-table th { text-align:left; font-size:10px; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); padding:6px 10px; border-bottom:1px solid var(--border); font-weight:500; }
+  .exec-table td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text); }
+  .exec-table tr:last-child td { border-bottom:none; }
+  .exec-table tr:hover td { background:var(--surface2); }
+
+  /* SEARCH PANEL — no run col */
+  .search-panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:3rem; }
+  .search-panel-overlay.open { display:flex; }
+  .exec-panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:3rem; }
+  .exec-panel-overlay.open { display:flex; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo-icon">⚡</div>
+    <div>
+      <h1>Tosca Pipeline Generator</h1>
+      <div class="subtitle">// Azure DevOps · CIO Automation23 · tosca_execution_client_v3.ps1</div>
+    </div>
+  </header>
+
+
+
+  <!-- STEP 1: CONEXIÓN -->
+  <div class="card" id="card-conn">
+    <div class="card-title">🔌 01 · Connection Azure DevOps</div>
+    <div class="row">
+      <div class="field">
+        <label>ORGANIZATION <span class="req">*</span></label>
+        <input type="text" id="org" placeholder="mi-organizacion" value="accenturecio23"/>
+      </div>
+      <div class="field">
+        <label>PROJECT <span class="req">*</span></label>
+        <input type="text" id="project" placeholder="MiProyecto" value="CIOSAPAutomation_5080"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>PERSONAL ACCESS TOKEN (PAT) <span class="req">*</span></label>
+      <input type="password" id="pat" placeholder="Pega tu PAT aquí" autocomplete="off" value="AkbVhgE4JbUCdMnprSeebk99sQYLFLgoeuWD6wtTsHAnSJfeSIplJQQJ99CEACAAAAAQ3W9hAAASAZDO4SI1"/>
+      <div class="hint">Permissions: Code (Read &amp; Write) · Build (Read &amp; Execute)</div>
+    </div>
+    <div class="btn-row">
+      <button onclick="testConnection()" id="btn-conn" class="btn-accent">⚡ Test Connection</button>
+    </div>
+    <div id="conn-msg" class="msg"></div>
+    <div id="top-nav" style="display:none;gap:10px;margin-top:12px;flex-wrap:wrap;">
+      <button id="btn-nav-create" onclick="showCreateFlow()" class="btn-accent" style="flex:1;min-width:160px;justify-content:center;padding:12px 20px;font-size:13px;">
+        ＋ Create New Pipeline
+      </button>
+      <button id="btn-nav-execs" onclick="openExecutionsPanel()" class="btn-execs" style="flex:1;min-width:160px;justify-content:center;padding:12px 20px;font-size:13px;">
+        🕐 Last Executions
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: PARÁMETROS -->
+  <div class="card hidden" id="card-params">
+    <div class="card-title">⚙️ 02 · Parameters del Pipeline</div>
+
+    <!-- MODE SELECTOR -->
+    <div style="margin-bottom:1.25rem;display:inline-flex;align-items:center;gap:10px;padding:9px 16px;border-radius:8px;background:rgba(0,120,212,.1);border:1px solid rgba(0,120,212,.25);">
+      <span style="font-size:16px;">🧩</span>
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">Classic Pipeline</div>
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--info);">No YAML file · tasks defined directly via API</div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <div class="row">
+      <div class="field">
+        <label>PIPELINE NAME <span class="req">*</span></label>
+        <div class="name-ac-wrap">
+          <input type="text" id="pipelineName" placeholder="Tosca-TechSupport-Execution" autocomplete="off" oninput="onPipelineNameInput(this.value)" onkeydown="navigateAcDrop(event)" onblur="setTimeout(closeAcDrop,150)"/>
+          <div id="name-ac-drop" class="name-ac-drop"></div>
+        </div>
+        <div id="name-hint" class="name-hint"></div>
+      </div>
+      <div class="field">
+        <label>PROCESS AREA <span class="req">*</span></label>
+        <input type="text" id="processArea" value="TechSupport"/>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>PIPELINE FOLDER <span class="req">*</span></label>
+      <select id="pipelineFolder" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;">
+        <option value="">Loading folders...</option>
+      </select>
+      <div id="folder-hint" style="font-size:11px;margin-top:4px;font-family:'DM Mono',monospace;color:var(--muted2);"></div>
+    </div>
+
+    <div class="field">
+      <label>REQUESTOR <span class="req">*</span></label>
+      <input type="text" id="requestor" value="Juan.manuel.delaudo@accenture.com"/>
+    </div>
+
+    <div class="field">
+      <label>UNIQUE ID <span class="req">*</span> <span class="manual-badge">manual input</span></label>
+      <input type="text" id="uniqueId" placeholder="Ej: 3a12f1d5-e392-bc8d-f623-5e5a7b306413"/>
+      <div class="hint">Value provided as data input · unique per execution</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <div class="row">
+      <div class="field">
+        <label>FOLDER PATH</label>
+        <input type="text" id="folderPath" value="c:\tempresults\results"/>
+      </div>
+      <div class="field">
+        <label>RESULT FILE NAME</label>
+        <input type="text" id="resultFileName" value="result.xml"/>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button onclick="previewPipeline()" class="btn-accent" id="btn-preview">→ Preview</button>
+    </div>
+    <div id="params-msg" class="msg"></div>
+  </div>
+
+  <!-- STEP 3: PREVIEW -->
+  <div class="card hidden" id="card-preview">
+    <div class="card-title" id="preview-title">📄 03 · Preview</div>
+
+    <!-- YAML mode preview -->
+    <div id="preview-yaml-section">
+      <div id="template-source" class="msg info" style="display:block;margin-bottom:.75rem;"></div>
+      <div class="yaml-wrap">
+        <div class="yaml-header">
+          <span id="yaml-filename">pipeline.yml</span>
+          <button class="yaml-copy" onclick="copyYaml()">⎘ Copy YAML</button>
+        </div>
+        <pre id="yaml-pre"></pre>
+      </div>
+    </div>
+
+    <!-- CLASSIC mode preview -->
+    <div id="preview-classic-section" style="display:none;">
+      <div class="msg info" style="display:block;margin-bottom:.75rem;">
+        🧩 Classic Pipeline · no YAML file · tasks are created directly in Azure DevOps via API
+      </div>
+      <div id="classic-summary"></div>
+    </div>
+
+    <div class="btn-row" style="margin-top:1.25rem;">
+      <button onclick="createPipeline()" id="btn-create" class="btn-accent">☁ Create Pipeline en Azure DevOps</button>
+      <button onclick="resetParams()">↩ Edit Parameters</button>
+    </div>
+    <div id="create-msg" class="msg"></div>
+    <div id="log-box" class="log-box"></div>
+    <div id="result-area"></div>
+  </div>
+
+</div>
+
+  <!-- SEARCH PIPELINES PANEL -->
+  <div class="search-panel-overlay" id="search-panel-overlay" onclick="maybeCloseSearchPanel(event)">
+    <div class="panel-box">
+      <div class="panel-hdr">
+        <span class="panel-title">🔍 Search Existing Pipelines</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="search-panel-count" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted2);"></span>
+          <button onclick="loadAllPipelines()" id="btn-refresh-search" style="font-size:11px;padding:4px 10px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);font-family:'DM Mono',monospace;">↺ Refresh</button>
+          <button class="panel-close" onclick="closeSearchPanel()">✕</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <input type="text" class="panel-search" id="search-panel-input" placeholder="Buscar por nombre, UniqueID o ID..." oninput="filterSearchPanel()"/>
+        <div id="search-panel-content"><div class="panel-load-msg">Cargando pipelines...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAST EXECUTIONS PANEL -->
+  <div class="exec-panel-overlay" id="exec-panel-overlay" onclick="maybeCloseExecPanel(event)">
+    <div class="panel-box">
+      <div class="panel-hdr">
+        <span class="panel-title">🕐 Last 80 Executions</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="loadLastExecutions()" id="btn-refresh-execs" style="font-size:11px;padding:4px 10px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);font-family:'DM Mono',monospace;">↺ Refresh</button>
+          <button class="panel-close" onclick="closeExecPanel()">✕</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <input type="text" class="panel-search" id="exec-search-input" placeholder="Filter by pipeline name, status or requested by..." oninput="filterExecutions()"/>
+        <div id="exec-panel-content"><div class="panel-load-msg"><span class="spinner"></span> Loading executions...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAME-TAKEN POPUP -->
+  <div class="nt-overlay" id="nt-overlay" onclick="maybeCloseNtPopup(event)">
+    <div class="nt-box">
+      <button class="nt-close" onclick="closeNtPopup()">✕</button>
+      <div class="nt-icon">⚠️</div>
+      <div class="nt-title">Pipeline already exists</div>
+      <div class="nt-sub">This pipeline already exists in Azure DevOps. You can update its variables and run it directly.</div>
+
+      <div class="nt-info">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div><span>Name · </span><strong id="nt-name">—</strong></div>
+          <div><span>ID · </span><strong id="nt-id">—</strong></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
+        <div>
+          <label style="font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);font-weight:500;display:block;margin-bottom:4px;">UniqueID</label>
+          <input id="nt-uniqueid" type="text" placeholder="Loading..." style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-family:'DM Mono',monospace;"/>
+          <div id="nt-uniqueid-hint" style="font-size:10px;color:var(--muted2);margin-top:3px;font-family:'DM Mono',monospace;"></div>
+        </div>
+        <div>
+          <label style="font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);font-weight:500;display:block;margin-bottom:4px;">Requestor (mail)</label>
+          <input id="nt-requestor" type="text" placeholder="Loading..." style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-family:'DM Mono',monospace;"/>
+          <div id="nt-requestor-hint" style="font-size:10px;color:var(--muted2);margin-top:3px;font-family:'DM Mono',monospace;"></div>
+        </div>
+      </div>
+
+      <div id="nt-load-hint" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted2);margin-bottom:10px;min-height:16px;"></div>
+
+      <div class="nt-actions">
+        <button id="nt-run-btn" onclick="runExistingFromPopup()" class="btn-accent" style="flex:1;justify-content:center;">▶ Update &amp; Run</button>
+        <button onclick="closeNtPopup()" style="flex:1;justify-content:center;">↩ Choose another name</button>
+      </div>
+      <div class="nt-run-status" id="nt-run-status"></div>
+    </div>
+  </div>
+
+  <!-- LEGACY PANEL (kept for internal compatibility) -->
+  <div class="panel-overlay" id="panel-overlay" style="display:none!important;"></div>
+
+<footer>open locally in your browser · no data is stored · PAT kept in session memory only</footer>
+
+<script>
+let isConnected = false;
+let currentYaml = '';
+let repoCache = null;
+let currentMode = 'classic';
+
+// ── HELPERS ──
+function v(id){ return document.getElementById(id).value.trim(); }
+function enc(s){ return encodeURIComponent(s); }
+function authHeader(){ return {'Authorization':'Basic '+btoa(':'+v('pat'))}; }
+function setMsg(id,text,type){ const e=document.getElementById(id); e.textContent=text; e.className='msg '+type; }
+function setStep(n){ /* stepper removed */ }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function logClear(){ const b=document.getElementById('log-box'); b.innerHTML=''; b.classList.add('show'); }
+function logLine(t,c=''){ const b=document.getElementById('log-box'); b.innerHTML+=`<div class="${c}">${esc(t)}</div>`; b.scrollTop=b.scrollHeight; }
+function sanitize(n){ return n.replace(/[^a-zA-Z0-9\-_]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''); }
+
+// ── MODE TOGGLE ──
+function setMode(mode){
+  currentMode = mode;
+  document.getElementById('mode-yaml').classList.toggle('selected', mode==='yaml');
+  document.getElementById('mode-classic').classList.toggle('selected', mode==='classic');
+}
+
+// ── STEP 1: CONNECT ──
+async function testConnection(){
+  const org=v('org'),project=v('project'),pat=v('pat');
+  if(!org||!project||!pat){setMsg('conn-msg','Please fill in all fields.','err');return;}
+  const btn=document.getElementById('btn-conn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Connecting...';
+  try{
+    const res=await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/git/repositories?api-version=7.0`,
+      {headers:authHeader()}
+    );
+    if(res.ok){
+      isConnected=true;
+      const repos=(await res.json()).value;
+      repoCache=repos.find(r=>r.name.toLowerCase().replace(/[\s\-_]/g,'').includes('testtosc'))
+              ||repos.find(r=>r.name.toLowerCase().includes('tosca'))
+              ||repos.find(r=>r.name.toLowerCase().includes('pipeline'))
+              ||repos[0];
+      const note=repoCache?` · repo: "${repoCache.name}"`:'';
+      setMsg('conn-msg',`✓ Connection successful${note}`,'ok');
+      document.getElementById('top-nav').style.display='flex';
+      setStep(2);
+
+    } else {
+      const e=await res.json().catch(()=>({}));
+      setMsg('conn-msg',`Error ${res.status}: ${e.message||'Verifica PAT y permisos.'}`, 'err');
+    }
+  } catch(e){
+    setMsg('conn-msg','Could not connect. Open this file locally in your browser (double-click).','err');
+  }
+  btn.disabled=false; btn.innerHTML='⚡ Test Connection';
+}
+
+// ── FETCH TEMPLATE ──
+async function fetchTemplate(repo){
+  const org=v('org'),project=v('project');
+  const res=await fetch(
+    `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/git/repositories/${repo.id}/items?path=${enc('Sandbox/PipelineTemplate.yml')}&api-version=7.0`,
+    {headers:authHeader()}
+  );
+  if(!res.ok) throw new Error(`Could not find Sandbox/PipelineTemplate.yml (HTTP ${res.status})`);
+  return await res.text();
+}
+
+function injectVars(template, vars){
+  const block=`variables:\n  FolderPath: '${vars.folderPath}'\n  ResultFileName: '${vars.resultFileName}'\n  UniqueID: '${vars.uniqueId}'\n  ProcessArea: '${vars.processArea}'\n  Requestor: '${vars.requestor}'`;
+  let r=template.replace(/^variables:[\s\S]*?(?=^\w)/m, block+'\n\n');
+  if(r===template) r=template.replace(/(^pool:[\s\S]*?\n\n)/m,`$1${block}\n\n`);
+  return r;
+}
+
+// ── STEP 2: PREVIEW ──
+async function previewPipeline(){
+  if(!v('pipelineName')){setMsg('params-msg','Enter a pipeline name.','err');return;}
+  if(!v('processArea')||!v('requestor')||!v('uniqueId')){
+    setMsg('params-msg','ProcessArea, Requestor and UniqueID are required.','err');return;
+  }
+  const folderSel = document.getElementById('pipelineFolder');
+  if(!folderSel || !folderSel.value){
+    setMsg('params-msg','Please select a Pipeline Folder.','err');folderSel&&folderSel.focus();return;
+  }
+
+  const btn=document.getElementById('btn-preview');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Checking name...';
+
+  // ── Always verify the name against the API before proceeding ──
+  try {
+    const org=v('org'), project=v('project'), name=v('pipelineName');
+    const chkRes = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions?name=${enc(name)}&api-version=7.0`,
+      { headers: authHeader() }
+    );
+    if (chkRes.ok) {
+      const chkData = await chkRes.json();
+      const matches = (chkData.value || []).filter(d => d.name.toLowerCase() === name.toLowerCase());
+      if (matches.length > 0) {
+        // Name taken — store and open popup
+        _nameTakenPipeline = { id: matches[0].id, name: matches[0].name };
+        // Also update the hint UI for consistency
+        const inp = document.getElementById('pipelineName');
+        const hint = document.getElementById('name-hint');
+        if (inp) inp.className = 'name-taken';
+        if (hint) {
+          hint.innerHTML = `✗ Name already exists (ID: #${matches[0].id}) — <a href="#" onclick="openNtPopup();return false;" style="color:var(--warn);text-decoration:underline;">Run it?</a>`;
+          hint.className = 'name-hint err show';
+        }
+        btn.disabled=false; btn.innerHTML='→ Preview';
+        openNtPopup();
+        return;
+      } else {
+        // Name is free — clear any stale taken state
+        _nameTakenPipeline = null;
+        const inp = document.getElementById('pipelineName');
+        const hint = document.getElementById('name-hint');
+        if (inp) inp.className = 'name-ok';
+        if (hint) { hint.textContent = '✓ Name is available.'; hint.className = 'name-hint ok show'; }
+      }
+    }
+  } catch(e) {
+    // Non-blocking: if the check fails we allow proceeding (will fail at creation anyway)
+  }
+
+  btn.innerHTML='<span class="spinner"></span> Preparing...';
+
+  const vars={
+    folderPath:     v('folderPath')||'c:\\tempresults\\results',
+    resultFileName: v('resultFileName')||'',
+    uniqueId:       v('uniqueId'),
+    processArea:    v('processArea'),
+    requestor:      v('requestor'),
+    pipelineFolder: (document.getElementById('pipelineFolder') && document.getElementById('pipelineFolder').value) || '\\'
+  };
+
+  try{
+    if(currentMode==='yaml'){
+      document.getElementById('preview-yaml-section').style.display='block';
+      document.getElementById('preview-classic-section').style.display='none';
+      document.getElementById('preview-title').textContent='📄 03 · YAML Preview';
+
+      let tpl; let fromRepo=false;
+      if(repoCache){
+        try{ tpl=await fetchTemplate(repoCache); fromRepo=true; }
+        catch(e){
+          tpl=builtInTemplate();
+          document.getElementById('template-source').textContent=`⚠ ${e.message} — using local template as fallback.`;
+          document.getElementById('template-source').className='msg warn';
+          document.getElementById('template-source').style.display='block';
+        }
+      } else { tpl=builtInTemplate(); }
+
+      if(fromRepo){
+        document.getElementById('template-source').textContent=`✓ Template loaded from: ${repoCache.name} / Sandbox/PipelineTemplate.yml`;
+        document.getElementById('template-source').className='msg ok';
+        document.getElementById('template-source').style.display='block';
+      }
+
+      currentYaml=injectVars(tpl,vars);
+      const fname=sanitize(v('pipelineName'))+'.yml';
+      document.getElementById('yaml-filename').textContent=`Sandbox/${fname}`;
+      document.getElementById('yaml-pre').innerHTML=syntaxHighlight(currentYaml);
+
+    } else {
+      // CLASSIC MODE
+      document.getElementById('preview-yaml-section').style.display='none';
+      document.getElementById('preview-classic-section').style.display='block';
+      document.getElementById('preview-title').textContent='🧩 03 · Classic Pipeline Preview';
+      document.getElementById('classic-summary').innerHTML=buildClassicSummary(vars);
+    }
+
+    document.getElementById('params-msg').className='msg';
+    setStep(3);
+    document.getElementById('card-preview').classList.remove('hidden');
+    document.getElementById('card-preview').scrollIntoView({behavior:'smooth',block:'start'});
+  } catch(e){
+    setMsg('params-msg',`Error: ${e.message}`,'err');
+  }
+  btn.disabled=false; btn.innerHTML='→ Preview';
+}
+
+function buildClassicSummary(vars){
+  const rows=[
+    ['Pipeline name', v('pipelineName')],
+    ['Folder',        vars.pipelineFolder || '\\'],
+    ['Pool',          'CIO Automation23'],
+    ['ProcessArea',   vars.processArea],
+    ['Requestor',     vars.requestor],
+    ['UniqueID',      vars.uniqueId],
+    ['FolderPath',    vars.folderPath],
+    ['ResultFileName',vars.resultFileName||'(vacío)'],
+  ];
+  const tasks=[
+    '1 · PowerShell@2 — Execute E2G API (tosca_execution_client_v3.ps1)',
+    '2 · PublishTestResults@2 — Publish Test Results',
+    '3 · CopyFiles@2 — Copy to staging directory [always]',
+    '4 · PublishBuildArtifacts@1 — Publish Artifact [always]',
+    '5 · EmailReportV2@2 — Send Email Report → '+vars.requestor+' [always]',
+  ];
+  return `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;">pipeline variables</div>
+      <div style="padding:1rem;">
+        ${rows.map(([k,v2])=>`<div style="display:flex;gap:8px;margin:5px 0;font-size:12px;font-family:'DM Mono',monospace;"><span style="color:var(--muted2);min-width:130px;">${esc(k)}</span><span style="color:var(--text);">${esc(v2)}</span></div>`).join('')}
+      </div>
+      <div style="padding:10px 14px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;">tasks</div>
+      <div style="padding:1rem;">
+        ${tasks.map(t=>`<div style="font-size:12px;font-family:'DM Mono',monospace;color:var(--info);margin:6px 0;">→ ${esc(t)}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function copyYaml(){
+  navigator.clipboard.writeText(currentYaml).then(()=>{
+    const b=document.querySelector('.yaml-copy'); b.textContent='✓ Copiado';
+    setTimeout(()=>b.textContent='⎘ Copy YAML',2000);
+  });
+}
+
+function resetParams(){
+  document.getElementById('card-preview').classList.add('hidden');
+  document.getElementById('result-area').innerHTML='';
+  document.getElementById('create-msg').className='msg';
+  document.getElementById('log-box').classList.remove('show');
+  document.getElementById('log-box').innerHTML='';
+  setStep(2);
+  document.getElementById('card-params').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── STEP 3: CREATE ──
+async function createPipeline(){
+  if(!isConnected){setMsg('create-msg','Please verify the connection first (step 1).','err');return;}
+  const org=v('org'),project=v('project');
+  const btn=document.getElementById('btn-create');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Creating pipeline...';
+  document.getElementById('create-msg').className='msg';
+  document.getElementById('result-area').innerHTML='';
+  logClear();
+
+  try{
+    if(currentMode==='yaml'){
+      await createYamlPipeline(org,project);
+    } else {
+      await createClassicPipeline(org,project);
+    }
+  } catch(e){
+    logLine(`✗ ${e.message}`,'log-err');
+    setMsg('create-msg',`Error: ${e.message}`,'err');
+  }
+  btn.disabled=false; btn.innerHTML='☁ Create Pipeline en Azure DevOps';
+}
+
+// ── CREATE YAML PIPELINE ──
+async function createYamlPipeline(org,project){
+  if(!repoCache) throw new Error('Repository not detected. Reconnect in step 1.');
+
+  const fname=sanitize(v('pipelineName'))+'.yml';
+  const yamlPath=`Sandbox/${fname}`;
+
+  // 1. Get latest commit
+  logLine(`1/4 Getting repo branch "${repoCache.name}"...`,'log-info');
+  const branchName=(repoCache.defaultBranch||'refs/heads/main').replace('refs/heads/','');
+  const statsRes=await fetch(
+    `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/git/repositories/${repoCache.id}/stats/branches?name=${enc(branchName)}&api-version=7.0`,
+    {headers:authHeader()}
+  );
+  if(!statsRes.ok) throw new Error(`Could not get branch "${branchName}": HTTP ${statsRes.status}`);
+  const latestCommit=(await statsRes.json()).commit.commitId;
+  logLine(`   branch: ${branchName} · commit: ${latestCommit.substring(0,8)}...`,'log-ok');
+
+  // 2. Check if file exists
+  logLine(`2/4 Checking "${yamlPath}"...`,'log-info');
+  let fileExists=false;
+  try{
+    const chk=await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/git/repositories/${repoCache.id}/items?path=${enc(yamlPath)}&api-version=7.0`,
+      {headers:authHeader()}
+    );
+    if(chk.ok){ fileExists=true; logLine(`   already exists → will be overwritten`,'log-warn'); }
+    else logLine(`   does not exist → will be created`,'log-info');
+  } catch(e){}
+
+  // 3. Push YAML
+  logLine(`3/4 Saving "${yamlPath}" to the repo...`,'log-info');
+  const pushBody={
+    refUpdates:[{name:`refs/heads/${branchName}`,oldObjectId:latestCommit}],
+    commits:[{
+      comment:`Add pipeline: ${v('pipelineName')} [UniqueID: ${v('uniqueId')}]`,
+      changes:[{
+        changeType:fileExists?'edit':'add',
+        item:{path:yamlPath},
+        newContent:{content:btoa(unescape(encodeURIComponent(currentYaml))),contentType:'base64Encoded'}
+      }]
+    }]
+  };
+  const pushRes=await fetch(
+    `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/git/repositories/${repoCache.id}/pushes?api-version=7.0`,
+    {method:'POST',headers:{...authHeader(),'Content-Type':'application/json'},body:JSON.stringify(pushBody)}
+  );
+  if(!pushRes.ok){const pe=await pushRes.json().catch(()=>({})); throw new Error(`Error saving file: ${pe.message||'HTTP '+pushRes.status}`);}
+  const pushData=await pushRes.json();
+  logLine(`   ✓ commit: ${pushData.commits?.[0]?.commitId?.substring(0,8)||'ok'}`,'log-ok');
+
+  // 4. Create definition
+  logLine(`4/4 Creating pipeline definition...`,'log-info');
+  const defBody={
+    name:v('pipelineName'),type:2,quality:1,
+    queue:{name:'CIO Automation23'},
+    repository:{id:repoCache.id,type:'TfsGit',name:repoCache.name,defaultBranch:`refs/heads/${branchName}`,clean:'false',checkoutSubmodules:false},
+    process:{type:2,yamlFilename:yamlPath},
+    variables:buildVarDefs()
+  };
+  const created=await postDefinition(org,project,defBody);
+  logLine(`   ✓ Pipeline created · ID: #${created.id}`,'log-ok');
+  showResult(org,project,created,`Archivo: ${yamlPath}`);
+}
+
+// ── CREATE CLASSIC PIPELINE ──
+async function createClassicPipeline(org,project){
+  logLine(`1/2 Looking up agent queue "CIO Automation23"...`,'log-info');
+
+  // Get queue ID
+  const qRes=await fetch(
+    `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/distributedtask/queues?api-version=7.0`,
+    {headers:authHeader()}
+  );
+  let queueId=null;
+  if(qRes.ok){
+    const queues=(await qRes.json()).value||[];
+    const q=queues.find(q=>q.name.toLowerCase().includes('cio automation'))
+            ||queues.find(q=>q.name.toLowerCase().includes('automation'))
+            ||queues[0];
+    if(q){ queueId=q.id; logLine(`   queue found: "${q.name}" (id:${q.id})`,'log-ok'); }
+    else  { logLine(`   ⚠ Could not find "CIO Automation23" · using Default`,'log-warn'); }
+  } else {
+    logLine(`   ⚠ Could not retrieve queues · using Default`,'log-warn');
+  }
+
+  logLine(`2/2 Creating Classic pipeline...`,'log-info');
+
+  const uid=v('uniqueId');
+  const processArea=v('processArea');
+  const requestor=v('requestor');
+  const folderPath=v('folderPath')||'c:\\tempresults\\results';
+  const resultFile=v('resultFileName')||'';
+
+  // Classic pipeline body — process.type=1
+  // Repository is required even for Classic pipelines (Azure DevOps API requirement)
+  if(!repoCache) throw new Error('Repository not detected. Reconnect in step 1.');
+  const branchName=(repoCache.defaultBranch||'refs/heads/main').replace('refs/heads/','');
+  const queueObj = queueId ? {id:queueId} : {name:'CIO Automation23'};
+  const selectedFolder = (document.getElementById('pipelineFolder') && document.getElementById('pipelineFolder').value) || '\\';
+  const defBody={
+    name: v('pipelineName'),
+    path: selectedFolder,
+    type: 2,
+    quality: 1,
+    jobAuthorizationScope: 1,
+    queue: queueObj,
+    repository:{
+      id: repoCache.id,
+      name: repoCache.name,
+      type: 'TfsGit',
+      defaultBranch: `refs/heads/${branchName}`,
+      clean: 'false',
+      checkoutSubmodules: false
+    },
+    process:{
+      type:1,
+      phases:[{
+        name:'Run on agent',
+        refName:'Phase_1',
+        condition:'succeeded()',
+        jobAuthorizationScope: 1,
+        target:{
+          type:1,
+          allowScriptsAuthAccessOption:false,
+          queue: queueObj
+        },
+        steps:[
+          {
+            task:{id:'e213ff0f-5d5c-4791-802d-52ea3e7be1f1',versionSpec:'2.*',definitionType:'task'},
+            displayName:'Execute E2G API',
+            condition:'succeeded()',
+            enabled:true,
+            inputs:{
+              targetType:'filePath',
+              filePath:'tosca_execution_client_v3.ps1',
+              arguments:'-resultsFolderPath "$(FolderPath)" -resultsFileName "$(ResultFileName)" -events "[{""eventID"": ""$(UniqueID)""}]" -characteristics "[{""AgentCharacteristics"":""AgentIdentifier=$(Agent.MachineName)-A05080DIRPPAMAUTO""}]" -ScriptName "$(Build.DefinitionName)" -ProcessArea "$(ProcessArea)"',
+              pwsh:'false'
+            }
+          },
+          {
+            task:{id:'0b0f01ed-7dde-43ff-9cbb-e48954daf9b1',versionSpec:'2.*',definitionType:'task'},
+            displayName:'Publish Test Results',
+            condition:'succeeded()',
+            enabled:true,
+            inputs:{testResultsFiles:'$(ResultFileName)',searchFolder:'$(FolderPath)',failTaskOnFailedTests:'true'}
+          },
+          {
+            task:{id:'5bfb729a-a7c8-4a78-a7c3-8d717bb7c13c',versionSpec:'2.*',definitionType:'task'},
+            displayName:'Copy Files to staging',
+            condition:'always()',
+            enabled:true,
+            inputs:{SourceFolder:'$(FolderPath)',Contents:'$(ResultFileName)',TargetFolder:'$(build.artifactstagingdirectory)'}
+          },
+          {
+            task:{id:'2ff763a7-ce83-4e1f-bc89-0ae63477cebe',versionSpec:'1.*',definitionType:'task'},
+            displayName:'Publish Artifact',
+            condition:'always()',
+            enabled:true,
+            inputs:{ArtifactName:'Evidence $(ResultFileName)'}
+          }
+        ]
+      }]
+    },
+    variables:buildVarDefs()
+  };
+
+  const created=await postDefinition(org,project,defBody);
+  logLine(`   ✓ Classic pipeline created · ID: #${created.id}`,'log-ok');
+  showResult(org,project,created,'Type: Classic (no YAML)');
+}
+
+async function postDefinition(org,project,body){
+  const res=await fetch(
+    `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions?api-version=7.0`,
+    {method:'POST',headers:{...authHeader(),'Content-Type':'application/json'},body:JSON.stringify(body)}
+  );
+  if(!res.ok){const e=await res.json().catch(()=>({})); throw new Error(e.message||`HTTP ${res.status}`);}
+  return await res.json();
+}
+
+function buildVarDefs(){
+  return {
+    FolderPath:     {value:v('folderPath')||'c:\\tempresults\\results',allowOverride:true},
+    ResultFileName: {value:v('resultFileName')||'',                    allowOverride:true},
+    UniqueID:       {value:v('uniqueId'),                              allowOverride:true},
+    ProcessArea:    {value:v('processArea'),                           allowOverride:true},
+    Requestor:      {value:v('requestor'),                             allowOverride:true}
+  };
+}
+
+function showResult(org,project,created,extra){
+  setStep(4);
+  window._lastCreated = created;
+  window._lastOrg = org;
+  window._lastProject = project;
+  document.getElementById('result-area').innerHTML=`
+    <div class="result-card" id="created-card">
+      <div class="result-title">✓ Pipeline created successfully</div>
+      <div class="result-row">ID: <span class="result-val">#${created.id}</span></div>
+      <div class="result-row">Nombre: <span class="result-val">${esc(created.name)}</span></div>
+      <div class="result-row">Pool: <span class="result-val">CIO Automation23</span></div>
+      <div class="result-row">${esc(extra)}</div>
+      <div class="result-row" style="margin-top:6px;">UniqueID: <span class="result-val" style="color:var(--purple)">${esc(v('uniqueId'))}</span></div>
+      <div class="result-row">ProcessArea: <span class="result-val">${esc(v('processArea'))}</span></div>
+      <div class="result-row">Requestor: <span class="result-val">${esc(v('requestor'))}</span></div>
+      <div class="result-row" style="margin-top:10px;">
+        <a href="https://dev.azure.com/${enc(org)}/${enc(project)}/_build/definition?definitionId=${created.id}" target="_blank" class="result-link">→ View pipeline in Azure DevOps ↗</a>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:1rem;">
+      <button onclick="runPipeline()" id="btn-run" class="btn-run">▶ Run Pipeline</button>
+      <button onclick="newPipeline()" class="btn-ok">+ Generate New Pipeline</button>
+    </div>
+    <div id="run-status"></div>`;
+}
+
+async function runPipeline(){
+  const org=window._lastOrg, project=window._lastProject, def=window._lastCreated;
+  const btn=document.getElementById('btn-run');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Starting execution...';
+
+  const statusEl=document.getElementById('run-status');
+  statusEl.innerHTML='';
+
+  try{
+    // Queue a build run
+    const queueRes=await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds?api-version=7.0`,
+      {
+        method:'POST',
+        headers:{...authHeader(),'Content-Type':'application/json'},
+        body:JSON.stringify({definition:{id:def.id}})
+      }
+    );
+    if(!queueRes.ok){
+      const e=await queueRes.json().catch(()=>({}));
+      throw new Error(e.message||`HTTP ${queueRes.status}`);
+    }
+    const build=await queueRes.json();
+    const buildId=build.id;
+    const buildUrl=`https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${buildId}`;
+
+    statusEl.innerHTML=renderRunStatus('running', `Execution started · Build #${buildId}`, buildUrl);
+    btn.innerHTML='<span class="spinner"></span> Running...';
+
+    // Poll build status
+    await pollBuild(org, project, buildId, buildUrl, btn);
+
+  } catch(e){
+    statusEl.innerHTML=renderRunStatus('error','Error starting execution: '+e.message,'');
+    btn.disabled=false; btn.innerHTML='▶ Run Pipeline';
+  }
+}
+
+async function pollBuild(org, project, buildId, buildUrl, btn){
+  const statusEl=document.getElementById('run-status');
+  const maxWait=60*60*1000; // 1 hour max
+  const interval=10000;     // poll every 10s
+  const started=Date.now();
+
+  while(true){
+    await new Promise(r=>setTimeout(r,interval));
+
+    if(Date.now()-started > maxWait){
+      statusEl.innerHTML=renderRunStatus('error','Timeout reached (1h). Please check Azure DevOps.',buildUrl);
+      btn.disabled=false; btn.innerHTML='▶ Run Pipeline';
+      return;
+    }
+
+    try{
+      const res=await fetch(
+        `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds/${buildId}?api-version=7.0`,
+        {headers:authHeader()}
+      );
+      if(!res.ok) continue;
+      const build=await res.json();
+      const status=build.status;     // inProgress, completed, notStarted
+      const result=build.result;     // succeeded, failed, canceled, partiallySucceeded
+      const elapsed=Math.round((Date.now()-started)/1000);
+
+      if(status==='completed'){
+        if(result==='succeeded'){
+          statusEl.innerHTML=renderRunStatus('success',`✓ Execution completed successfully · Build #${buildId} · ${elapsed}s`,buildUrl);
+        } else if(result==='partiallySucceeded'){
+          statusEl.innerHTML=renderRunStatus('warn',`⚠ Execution partially completed · Build #${buildId} · ${elapsed}s`,buildUrl);
+        } else {
+          statusEl.innerHTML=renderRunStatus('error',`✗ Execution failed (${result||'unknown'}) · Build #${buildId} · ${elapsed}s`,buildUrl);
+        }
+        btn.disabled=false; btn.innerHTML='▶ Run Pipeline';
+        return;
+      } else {
+        // Still running — update elapsed
+        statusEl.innerHTML=renderRunStatus('running',`Running... Build #${buildId} · ${elapsed}s elapsed`,buildUrl);
+      }
+    } catch(e){ /* ignore transient errors */ }
+  }
+}
+
+function renderRunStatus(type, text, url){
+  const colors={
+    success:{bg:'rgba(74,222,128,.08)',border:'rgba(74,222,128,.25)',color:'var(--ok)',icon:'✓'},
+    error:  {bg:'rgba(248,113,113,.08)',border:'rgba(248,113,113,.25)',color:'var(--err)',icon:'✗'},
+    warn:   {bg:'rgba(251,191,36,.08)', border:'rgba(251,191,36,.25)', color:'var(--warn)',icon:'⚠'},
+    running:{bg:'rgba(96,165,250,.08)', border:'rgba(96,165,250,.25)', color:'var(--info)',icon:'⟳'},
+  };
+  const c=colors[type]||colors.running;
+  const link=url?`<div style="margin-top:8px;"><a href="${url}" target="_blank" style="color:var(--info);font-size:11px;text-decoration:none;">→ View execution in Azure DevOps ↗</a></div>`:'';
+  return `<div style="margin-top:12px;padding:14px 16px;border-radius:10px;background:${c.bg};border:1px solid ${c.border};color:${c.color};font-family:'DM Mono',monospace;font-size:12px;line-height:1.6;">
+    <span>${c.icon} ${esc(text)}</span>${link}
+  </div>`;
+}
+
+function newPipeline(){
+  ['result-area'].forEach(id=>document.getElementById(id).innerHTML='');
+  ['create-msg','params-msg'].forEach(id=>document.getElementById(id).className='msg');
+  document.getElementById('log-box').classList.remove('show');
+  document.getElementById('log-box').innerHTML='';
+  document.getElementById('card-preview').classList.add('hidden');
+  document.getElementById('uniqueId').value='';
+  setStep(2);
+  document.getElementById('card-params').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── BUILT-IN TEMPLATE ──
+function builtInTemplate(){
+  return `pool:\n  name: CIO Automation23\nvariables:\n  FolderPath: 'c:\\tempresults\\results'\n  ResultFileName: ''\n  UniqueID: ''\n  ProcessArea: ''\n\nsteps:\n- task: PowerShell@2\n  displayName: 'Execute E2G API'\n  inputs:\n    targetType: filePath\n    filePath: 'tosca_execution_client_v3.ps1'\n    arguments: '-resultsFolderPath "\$(FolderPath)" -resultsFileName "\$(ResultFileName)" -events "[{""eventID"": ""\$(UniqueID)""}]" -characteristics "[{""AgentCharacteristics"":""AgentIdentifier=\$(Agent.MachineName)-A05080DIRPPAMAUTO""}]" -ScriptName "\$(Build.DefinitionName)" -ProcessArea "\$(ProcessArea)"'\n\n- task: PublishTestResults@2\n  displayName: 'Publish Test Results'\n  inputs:\n    testResultsFiles: '\$(ResultFileName)'\n    searchFolder: '\$(FolderPath)'\n    failTaskOnFailedTests: true\n\n- task: CopyFiles@2\n  displayName: 'Copy Files to: \$(build.artifactstagingdirectory)'\n  inputs:\n    SourceFolder: '\$(FolderPath)'\n    Contents: '\$(ResultFileName)'\n    TargetFolder: '\$(build.artifactstagingdirectory)'\n  condition: always()\n\n- task: PublishBuildArtifacts@1\n  displayName: 'Publish Artifact'\n  inputs:\n    ArtifactName: 'Evidence \$(ResultFileName)'\n  condition: always()\n\n- task: epsteam.EmailReportExtension.EmailReport.EmailReportV2@2\n  displayName: 'Send Email Report'\n  inputs:\n    subject: '\$(Build.DefinitionName) {passPercentage} tests passed'\n    toAddress: '\$(Requestor)'\n    ccAddress: 'CIO.SAP.Automate.Test.ExecutionTeam@accenture.com'\n    defaultDomain: 'automated.testresult@accenture.com'\n    includeResultsStr: '1,2'\n    includeCommits: false\n    enableTLS: false\n    smtpConnectionEndpoint: 'CIO SAP AUTOMATION'\n  condition: always()\n`;
+}
+
+function syntaxHighlight(yaml){
+  return yaml.split('\n').map(line=>{
+    const e=esc(line);
+    if(line.trim().startsWith('#')) return `<span class="y-com">${e}</span>`;
+    if(/^\s*-\s*task:/.test(line))  return `<span class="y-task">${e}</span>`;
+    if(/^\s*-\s/.test(line))        return `<span class="y-sym">${e}</span>`;
+    const m=line.match(/^(\s*)([\w\-]+)(:)(\s*)(.*)?$/);
+    if(m){
+      const[,indent,key,colon,space,val=''] = m;
+      const vs=val.startsWith("'")||val.startsWith('"')
+        ?`<span class="y-str">${esc(val)}</span>`
+        :val?`<span class="y-val">${esc(val)}</span>`:'';
+      return `${esc(indent)}<span class="y-key">${esc(key)}</span><span class="y-sym">${colon}</span>${esc(space)}${vs}`;
+    }
+    return e;
+  }).join('\n');
+}
+
+// ── FOLDER LOADER ──
+function loadFolders() {
+  const sel = document.getElementById('pipelineFolder');
+  const hint = document.getElementById('folder-hint');
+  if (!sel) return;
+
+  const folders = [
+    '\\BASIS',
+    '\\CAM',
+    '\\CO',
+    '\\Demo OTC',
+    '\\OTC',
+    '\\Perfomance',
+    '\\RE',
+    '\\REFX',
+    '\\RTP',
+    '\\RTR',
+    '\\Sandbox',
+    '\\Security GRC',
+    '\\Security RAM',
+    '\\T&E',
+    '\\TechSupport',
+    '\\Template Pipelines',
+    '\\TM',
+    '\\Treasury',
+    '\\UTILITIES',
+  ];
+
+  sel.innerHTML = '<option value="">— Select a folder —</option>';
+  folders.forEach(path => {
+    const opt = document.createElement('option');
+    opt.value = path;
+    opt.textContent = path;
+    sel.appendChild(opt);
+  });
+  sel.disabled = false;
+  if (hint) { hint.textContent = `${folders.length} folders available`; hint.style.color = 'var(--muted2)'; }
+}
+
+// ── PIPELINE NAME AUTOCOMPLETE + VALIDATION ──
+let _acDebounce    = null;
+let _acActiveIdx   = -1;
+let _nameCheckTimer     = null;
+let _nameTakenPipeline  = null;
+
+function onPipelineNameInput(raw) {
+  const q = raw.trim();
+  const inp  = document.getElementById('pipelineName');
+  const hint = document.getElementById('name-hint');
+
+  // Reset
+  clearTimeout(_acDebounce);
+  clearTimeout(_nameCheckTimer);
+  _nameTakenPipeline = null;
+  inp.className = '';
+  hint.textContent = '';
+  hint.className = 'name-hint';
+  closeAcDrop();
+
+  if (q.length < 3) return;
+
+  // Show "searching" hint immediately
+  hint.textContent = '⟳ Searching...';
+  hint.className = 'name-hint warn show';
+
+  _acDebounce = setTimeout(() => runNameSearch(q), 350);
+}
+
+async function runNameSearch(q) {
+  const inp  = document.getElementById('pipelineName');
+  const hint = document.getElementById('name-hint');
+
+  // Guard: make sure we still have the same value
+  if ((inp.value || '').trim() !== q) return;
+
+  const orgEl = document.getElementById('org');
+  const projEl = document.getElementById('project');
+  const patEl  = document.getElementById('pat');
+  if (!orgEl || !projEl || !patEl) return;
+  const org = orgEl.value.trim();
+  const project = projEl.value.trim();
+  const pat = patEl.value.trim();
+  if (!org || !project || !pat) {
+    hint.textContent = '⚠ Complete Step 1 connection first.';
+    hint.className = 'name-hint warn show';
+    return;
+  }
+
+  const headers = { 'Authorization': 'Basic ' + btoa(':' + pat) };
+
+  try {
+    // Direct wildcard search — fast, no need to load everything first
+    const url = `https://dev.azure.com/${encodeURIComponent(org)}/${encodeURIComponent(project)}/_apis/build/definitions?name=*${encodeURIComponent(q)}*&$top=20&api-version=7.0`;
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const matches = ((await r.json()).value || []).map(d => ({ id: d.id, name: d.name }));
+
+    // Guard again after await
+    if ((inp.value || '').trim() !== q) return;
+
+    openAcDrop(matches, q);
+
+    const exact = matches.find(p => p.name.toLowerCase() === q.toLowerCase());
+    if (exact) {
+      _nameTakenPipeline = { id: exact.id, name: exact.name };
+      inp.className = 'name-taken';
+      hint.innerHTML = `✗ Already exists (ID: #${exact.id}) — <a href="#" onclick="openNtPopup();return false;" style="color:var(--warn);text-decoration:underline;">Run it?</a>`;
+      hint.className = 'name-hint err show';
+    } else {
+      _nameTakenPipeline = null;
+      inp.className = 'name-ok';
+      hint.textContent = matches.length
+        ? `${matches.length} similar pipeline(s) found · name is available`
+        : '✓ Name is available.';
+      hint.className = 'name-hint ok show';
+    }
+  } catch(e) {
+    hint.textContent = '⚠ Search error: ' + e.message;
+    hint.className = 'name-hint warn show';
+  }
+}
+
+function openAcDrop(items, query) {
+  const drop = document.getElementById('name-ac-drop');
+  if (!drop) return;
+  if (!items.length) { closeAcDrop(); return; }
+  _acActiveIdx = -1;
+  const ql = query.toLowerCase();
+  const rows = items.slice(0, 15).map((p, i) => {
+    const exact = p.name.toLowerCase() === ql;
+    const badge = exact
+      ? `<span class="ac-exact">● exact match</span>`
+      : `<span class="ac-id">#${p.id}</span>`;
+    // Safe name for onclick attr: escape quotes
+    const safeName = p.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div class="name-ac-item" data-idx="${i}" onmousedown="selectAcItem(event,'${safeName}',${p.id})">
+      <span class="ac-name" title="${esc(p.name)}">${highlightMatch(p.name, query)}</span>
+      ${badge}
+    </div>`;
+  }).join('');
+  const total = items.length;
+  const footer = total > 15 ? `<div class="name-ac-header" style="border-top:1px solid var(--border);border-bottom:none;">+${total-15} more — keep typing to narrow down</div>` : '';
+  drop.innerHTML =
+    `<div class="name-ac-header">${total} pipeline${total!==1?'s':''} match "<strong style="color:var(--text)">${esc(query)}</strong>"</div>${rows}${footer}`;
+  drop.classList.add('open');
+}
+
+function closeAcDrop() {
+  const drop = document.getElementById('name-ac-drop');
+  if (drop) { drop.classList.remove('open'); drop.innerHTML = ''; }
+  _acActiveIdx = -1;
+}
+
+function highlightMatch(name, query) {
+  const idx = name.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return esc(name);
+  return esc(name.slice(0, idx)) +
+    `<strong style="color:var(--accent);">${esc(name.slice(idx, idx + query.length))}</strong>` +
+    esc(name.slice(idx + query.length));
+}
+
+function selectAcItem(e, name, id) {
+  e.preventDefault();
+  const inp  = document.getElementById('pipelineName');
+  const hint = document.getElementById('name-hint');
+  inp.value = name;
+  closeAcDrop();
+  _nameTakenPipeline = { id, name };
+  inp.className = 'name-taken';
+  hint.innerHTML = `✗ Already exists (ID: #${id}) — <a href="#" onclick="openNtPopup();return false;" style="color:var(--warn);text-decoration:underline;">Run it?</a>`;
+  hint.className = 'name-hint err show';
+}
+
+function navigateAcDrop(e) {
+  const drop = document.getElementById('name-ac-drop');
+  if (!drop || !drop.classList.contains('open')) return;
+  const items = drop.querySelectorAll('.name-ac-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _acActiveIdx = Math.min(_acActiveIdx + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _acActiveIdx = Math.max(_acActiveIdx - 1, 0);
+  } else if (e.key === 'Enter' && _acActiveIdx >= 0) {
+    e.preventDefault();
+    items[_acActiveIdx].dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    return;
+  } else if (e.key === 'Escape') {
+    closeAcDrop(); return;
+  } else { return; }
+  items.forEach((el, i) => el.classList.toggle('active', i === _acActiveIdx));
+  if (items[_acActiveIdx]) items[_acActiveIdx].scrollIntoView({ block: 'nearest' });
+}
+
+// checkPipelineName is now handled inline in runNameSearch.
+// Kept as stub so previewPipeline can still call it.
+async function checkPipelineName() {
+  const q = (document.getElementById('pipelineName').value||'').trim();
+  if (q.length >= 3) await runNameSearch(q);
+}
+
+function initNameInput() { /* no-op: input wired via oninput attribute */ }
+
+async function checkPipelineName() {
+  const name = document.getElementById('pipelineName') && document.getElementById('pipelineName').value.trim();
+  if (!name || name.length < 2) return;
+  const inp = document.getElementById('pipelineName');
+  const hint = document.getElementById('name-hint');
+  if (!hint) return;
+  inp.className = 'name-checking';
+  hint.textContent = '⟳ Checking name...';
+  hint.className = 'name-hint warn show';
+  try {
+    const org = v('org'), project = v('project');
+    const res = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions?name=${enc(name)}&api-version=7.0`,
+      { headers: authHeader() }
+    );
+    if (!res.ok) { inp.className=''; hint.className='name-hint'; return; }
+    const data = await res.json();
+    const exact = (data.value || []).filter(d => d.name.toLowerCase() === name.toLowerCase());
+    if (exact.length > 0) {
+      _nameTakenPipeline = { id: exact[0].id, name: exact[0].name };
+      inp.className = 'name-taken';
+      hint.innerHTML = `✗ Already exists (ID: #${exact[0].id}) — <a href="#" onclick="openNtPopup();return false;" style="color:var(--warn);text-decoration:underline;">Run it?</a>`;
+      hint.className = 'name-hint err show';
+    } else {
+      _nameTakenPipeline = null;
+      inp.className = 'name-ok';
+      hint.textContent = '✓ Name is available.';
+      hint.className = 'name-hint ok show';
+    }
+  } catch(e) { inp.className=''; hint.className='name-hint'; }
+}
+
+// ── NAME-TAKEN POPUP ──
+async function openNtPopup() {
+  if (!_nameTakenPipeline) return;
+  const org = v('org'), project = v('project');
+
+  // Reset UI
+  document.getElementById('nt-name').textContent = _nameTakenPipeline.name;
+  document.getElementById('nt-id').textContent = '#' + _nameTakenPipeline.id;
+  document.getElementById('nt-run-status').innerHTML = '';
+  document.getElementById('nt-load-hint').textContent = '⟳ Loading current values...';
+  document.getElementById('nt-uniqueid').value = '';
+  document.getElementById('nt-requestor').value = '';
+  document.getElementById('nt-uniqueid').disabled = true;
+  document.getElementById('nt-requestor').disabled = true;
+  document.getElementById('nt-uniqueid-hint').textContent = '';
+  document.getElementById('nt-requestor-hint').textContent = '';
+  const btn = document.getElementById('nt-run-btn');
+  btn.disabled = true;
+  btn.innerHTML = '▶ Update & Run';
+  document.getElementById('nt-overlay').classList.add('open');
+
+  // Fetch full definition to get current variable values
+  try {
+    const res = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions/${_nameTakenPipeline.id}?api-version=7.0`,
+      { headers: authHeader() }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const def = await res.json();
+    _nameTakenPipeline._fullDef = def; // store for PATCH later
+
+    const vars = def.variables || {};
+    const currentUid       = (vars.UniqueID    && vars.UniqueID.value)    || '';
+    const currentRequestor = (vars.Requestor   && vars.Requestor.value)   ||
+                             (vars.requestor   && vars.requestor.value)   || '';
+
+    document.getElementById('nt-uniqueid').value = currentUid;
+    document.getElementById('nt-requestor').value = currentRequestor;
+    document.getElementById('nt-uniqueid').disabled = false;
+    document.getElementById('nt-requestor').disabled = false;
+    document.getElementById('nt-uniqueid-hint').textContent = currentUid ? 'Current value loaded — edit if needed' : 'No value set — enter one';
+    document.getElementById('nt-requestor-hint').textContent = currentRequestor ? 'Current value loaded — edit if needed' : 'No value set — enter one';
+    document.getElementById('nt-load-hint').textContent = '✓ Values loaded from Azure DevOps';
+    btn.disabled = false;
+  } catch(e) {
+    document.getElementById('nt-load-hint').textContent = '⚠ Could not load values: ' + e.message + ' — you can still type them manually.';
+    document.getElementById('nt-uniqueid').disabled = false;
+    document.getElementById('nt-requestor').disabled = false;
+    btn.disabled = false;
+  }
+}
+
+function closeNtPopup() {
+  document.getElementById('nt-overlay').classList.remove('open');
+}
+
+function maybeCloseNtPopup(e) {
+  if (e.target === document.getElementById('nt-overlay')) closeNtPopup();
+}
+
+async function runExistingFromPopup() {
+  if (!_nameTakenPipeline) return;
+  const org = v('org'), project = v('project');
+  const defId = _nameTakenPipeline.id;
+  const btn = document.getElementById('nt-run-btn');
+  const statusEl = document.getElementById('nt-run-status');
+  const newUniqueId  = document.getElementById('nt-uniqueid').value.trim();
+  const newRequestor = document.getElementById('nt-requestor').value.trim();
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Updating variables...';
+  statusEl.innerHTML = '';
+
+  try {
+    // ── Step 1: PATCH definition with updated variables ──
+    const fullDef = _nameTakenPipeline._fullDef;
+    if (fullDef) {
+      // Merge updated values into existing variables
+      const vars = JSON.parse(JSON.stringify(fullDef.variables || {}));
+      if (newUniqueId)  { vars.UniqueID  = { ...(vars.UniqueID  || {}), value: newUniqueId,  allowOverride: true }; }
+      if (newRequestor) {
+        // Try to find the exact key name used in this pipeline
+        const reqKey = vars.Requestor ? 'Requestor' : vars.requestor ? 'requestor' : 'Requestor';
+        vars[reqKey] = { ...(vars[reqKey] || {}), value: newRequestor, allowOverride: true };
+      }
+      const patchBody = { ...fullDef, variables: vars };
+      const patchRes = await fetch(
+        `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions/${defId}?api-version=7.0`,
+        { method: 'PUT', headers: { ...authHeader(), 'Content-Type': 'application/json' }, body: JSON.stringify(patchBody) }
+      );
+      if (!patchRes.ok) {
+        const pe = await patchRes.json().catch(()=>({}));
+        throw new Error('Update failed: ' + (pe.message || `HTTP ${patchRes.status}`));
+      }
+      statusEl.innerHTML = ntStatus('ok', '✓ Variables updated successfully', '');
+    }
+
+    // ── Step 2: Queue the build ──
+    btn.innerHTML = '<span class="spinner"></span> Starting...';
+    const queueRes = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds?api-version=7.0`,
+      { method:'POST', headers:{...authHeader(),'Content-Type':'application/json'}, body:JSON.stringify({definition:{id:defId}}) }
+    );
+    if (!queueRes.ok) {
+      const e = await queueRes.json().catch(()=>({}));
+      throw new Error(e.message || `HTTP ${queueRes.status}`);
+    }
+    const build = await queueRes.json();
+    const buildId = build.id;
+    const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${buildId}`;
+
+    statusEl.innerHTML = ntStatus('running', `Execution started · Build #${buildId}`, buildUrl);
+    btn.innerHTML = '<span class="spinner"></span> Running...';
+
+    // ── Step 3: Poll until completed ──
+    const maxWait = 3600000, interval = 10000, started = Date.now();
+    while (true) {
+      await new Promise(r => setTimeout(r, interval));
+      if (Date.now() - started > maxWait) {
+        statusEl.innerHTML = ntStatus('err', 'Timeout (1h). Check Azure DevOps.', buildUrl);
+        btn.disabled = false; btn.innerHTML = '▶ Update & Run';
+        break;
+      }
+      try {
+        const res = await fetch(
+          `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds/${buildId}?api-version=7.0`,
+          { headers: authHeader() }
+        );
+        if (!res.ok) continue;
+        const b = await res.json();
+        if (b.status === 'completed') {
+          const r = b.result || 'unknown';
+          const elapsed = Math.round((Date.now()-started)/1000);
+          if (r === 'succeeded')           statusEl.innerHTML = ntStatus('ok',   `✓ Completed successfully · Build #${buildId} · ${elapsed}s`, buildUrl);
+          else if (r === 'partiallySucceeded') statusEl.innerHTML = ntStatus('warn', `⚠ Partially succeeded · Build #${buildId} · ${elapsed}s`, buildUrl);
+          else                             statusEl.innerHTML = ntStatus('err',  `✗ ${r} · Build #${buildId} · ${elapsed}s`, buildUrl);
+          btn.disabled = false; btn.innerHTML = '▶ Update & Run';
+          break;
+        } else {
+          const elapsed = Math.round((Date.now()-started)/1000);
+          statusEl.innerHTML = ntStatus('running', `Running... Build #${buildId} · ${elapsed}s`, buildUrl);
+        }
+      } catch(e) { /* ignore transient */ }
+    }
+  } catch(e) {
+    statusEl.innerHTML = ntStatus('err', 'Error: ' + e.message, '');
+    btn.disabled = false; btn.innerHTML = '▶ Update & Run';
+  }
+}
+
+function ntStatus(type, text, url) {
+  const c = {
+    ok:      { bg:'rgba(74,222,128,.08)',  border:'rgba(74,222,128,.25)',  color:'var(--ok)' },
+    err:     { bg:'rgba(248,113,113,.08)', border:'rgba(248,113,113,.25)', color:'var(--err)' },
+    warn:    { bg:'rgba(251,191,36,.08)',  border:'rgba(251,191,36,.25)',  color:'var(--warn)' },
+    running: { bg:'rgba(96,165,250,.08)',  border:'rgba(96,165,250,.25)',  color:'var(--info)' },
+  }[type] || {};
+  const link = url ? `<div style="margin-top:6px;"><a href="${url}" target="_blank" style="color:var(--info);font-size:11px;text-decoration:none;">→ View in Azure DevOps ↗</a></div>` : '';
+  return `<div style="padding:10px 14px;border-radius:8px;background:${c.bg};border:1px solid ${c.border};color:${c.color};">
+    ${esc(text)}${link}
+  </div>`;
+}
+
+// ── SEARCH PIPELINES PANEL ──
+let _allSearchPipelines = [];
+
+function openSearchPanel() {
+  document.getElementById('search-panel-overlay').classList.add('open');
+  if (_allSearchPipelines.length === 0) loadAllPipelines();
+}
+function closeSearchPanel() { document.getElementById('search-panel-overlay').classList.remove('open'); }
+function maybeCloseSearchPanel(e) { if (e.target === document.getElementById('search-panel-overlay')) closeSearchPanel(); }
+
+async function loadAllPipelines() {
+  const org = v('org'), project = v('project');
+  const pc = document.getElementById('search-panel-content');
+  const countEl = document.getElementById('search-panel-count');
+  pc.innerHTML = '<div class="panel-load-msg"><span class="spinner"></span> Loading all pipelines...</div>';
+  countEl.textContent = '';
+  try {
+    // Azure DevOps definitions endpoint — fetch in pages of 200 using $skip
+    let allDefs = [];
+    let skip = 0;
+    const pageSize = 200;
+    while (true) {
+      const url = `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions?$top=${pageSize}&$skip=${skip}&api-version=7.0`;
+      const res = await fetch(url, { headers: authHeader() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const page = data.value || [];
+      allDefs = allDefs.concat(page);
+      if (page.length < pageSize) break; // last page
+      skip += pageSize;
+    }
+
+    _allSearchPipelines = allDefs.map(d => ({
+      id: d.id,
+      name: d.name,
+      path: d.path || '\\',
+      variables: d.variables || {}
+    }));
+
+    countEl.textContent = `${_allSearchPipelines.length} pipelines`;
+    renderSearchTable(_allSearchPipelines);
+  } catch(e) {
+    pc.innerHTML = `<div class="panel-load-msg" style="color:var(--err);">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function filterSearchPanel() {
+  const q = document.getElementById('search-panel-input').value.toLowerCase();
+  if (!q) { renderSearchTable(_allSearchPipelines); return; }
+  const filtered = _allSearchPipelines.filter(p => {
+    const uid = (p.variables.UniqueID && p.variables.UniqueID.value) || '';
+    return p.name.toLowerCase().includes(q) || uid.toLowerCase().includes(q) || String(p.id).includes(q);
+  });
+  renderSearchTable(filtered);
+}
+
+function renderSearchTable(pipes) {
+  const pc = document.getElementById('search-panel-content');
+  if (!pipes.length) { pc.innerHTML = '<div class="panel-load-msg">No se encontraron pipelines.</div>'; return; }
+  const org = v('org'), project = v('project');
+  const rows = pipes.map(p => {
+    const uid = (p.variables.UniqueID && p.variables.UniqueID.value) || '—';
+    const processArea = (p.variables.ProcessArea && p.variables.ProcessArea.value) || '—';
+    const pipeUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build?definitionId=${p.id}`;
+    return `<tr>
+      <td style="color:var(--muted2);font-size:11px;">#${p.id}</td>
+      <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(p.name)}">${esc(p.name)}</td>
+      <td style="color:var(--purple);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(uid)}">${esc(uid)}</td>
+      <td>${esc(processArea)}</td>
+      <td style="color:var(--muted2);font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.path)}</td>
+      <td><a href="${pipeUrl}" target="_blank" style="font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid rgba(0,120,212,.35);background:rgba(0,120,212,.12);color:var(--accent);font-family:'DM Mono',monospace;text-decoration:none;white-space:nowrap;">↗ Abrir</a></td>
+    </tr>`;
+  }).join('');
+
+  pc.innerHTML = `<table class="pipe-table">
+    <thead><tr>
+      <th>ID</th><th>Name</th><th>UniqueID</th><th>Process Area</th><th>Path</th><th>Acción</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ── LAST EXECUTIONS PANEL ──
+let _allExecutions = [];
+
+function openExecutionsPanel() {
+  document.getElementById('exec-panel-overlay').classList.add('open');
+  loadLastExecutions();
+}
+function closeExecPanel() { document.getElementById('exec-panel-overlay').classList.remove('open'); }
+function maybeCloseExecPanel(e) { if (e.target === document.getElementById('exec-panel-overlay')) closeExecPanel(); }
+
+async function loadLastExecutions() {
+  const org = v('org'), project = v('project');
+  const pc = document.getElementById('exec-panel-content');
+  const searchEl = document.getElementById('exec-search-input');
+  if (searchEl) searchEl.value = '';
+  pc.innerHTML = '<div class="panel-load-msg"><span class="spinner"></span> Loading executions...</div>';
+  try {
+    const res = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds?$top=80&queryOrder=queueTimeDescending&api-version=7.0`,
+      { headers: authHeader() }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    _allExecutions = (await res.json()).value || [];
+    if (!_allExecutions.length) { pc.innerHTML = '<div class="panel-load-msg">No executions found.</div>'; return; }
+    renderExecutionsTable(_allExecutions);
+  } catch(e) {
+    pc.innerHTML = `<div class="panel-load-msg" style="color:var(--err);">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function filterExecutions() {
+  const q = document.getElementById('exec-search-input').value.toLowerCase();
+  if (!q) { renderExecutionsTable(_allExecutions); return; }
+  const filtered = _allExecutions.filter(b => {
+    const name = (b.definition && b.definition.name) ? b.definition.name.toLowerCase() : '';
+    const status = (b.result || b.status || '').toLowerCase();
+    const requestedBy = (b.requestedFor && b.requestedFor.displayName) ? b.requestedFor.displayName.toLowerCase() : '';
+    return name.includes(q) || status.includes(q) || requestedBy.includes(q) || String(b.id).includes(q);
+  });
+  renderExecutionsTable(filtered);
+}
+
+function renderExecutionsTable(builds) {
+  const pc = document.getElementById('exec-panel-content');
+  const org = v('org'), project = v('project');
+  if (!builds.length) { pc.innerHTML = '<div class="panel-load-msg">No executions match the filter.</div>'; return; }
+
+  const rows = builds.map(b => {
+    let statusBadge, statusText;
+    if (b.status === 'inProgress' || b.status === 'notStarted') {
+      statusBadge = 'running'; statusText = 'Running';
+    } else {
+      const r = b.result || 'unknown';
+      if (r === 'succeeded')               { statusBadge = 'succeeded'; statusText = '✓ Succeeded'; }
+      else if (r === 'failed')             { statusBadge = 'failed';    statusText = '✗ Failed'; }
+      else if (r === 'canceled')           { statusBadge = 'canceled';  statusText = 'Canceled'; }
+      else if (r === 'partiallySucceeded') { statusBadge = 'partial';   statusText = 'Partial'; }
+      else                                 { statusBadge = 'never';     statusText = r; }
+    }
+    const queuedAt   = b.queueTime  ? new Date(b.queueTime).toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    const finishedAt = b.finishTime ? new Date(b.finishTime).toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${b.id}`;
+    const defUrl   = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build?definitionId=${b.definition.id}`;
+    const requestedBy = (b.requestedFor && b.requestedFor.displayName) ? esc(b.requestedFor.displayName) : '—';
+    return `<tr>
+      <td style="color:var(--muted2);font-size:11px;"><a href="${buildUrl}" target="_blank" style="color:var(--info);text-decoration:none;">#${b.id} ↗</a></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(b.definition.name)}">
+        <a href="${defUrl}" target="_blank" style="color:var(--text);text-decoration:none;">${esc(b.definition.name)}</a>
+      </td>
+      <td><span class="pipe-badge ${statusBadge}">${statusText}</span></td>
+      <td style="color:var(--muted2);font-size:11px;">${queuedAt}</td>
+      <td style="color:var(--muted2);font-size:11px;">${finishedAt}</td>
+      <td style="color:var(--muted2);font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${requestedBy}</td>
+    </tr>`;
+  }).join('');
+
+  pc.innerHTML = `<table class="exec-table">
+    <thead><tr>
+      <th>Build</th><th>Pipeline</th><th>Status</th><th>Started</th><th>Finished</th><th>Requested by</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ── LEGACY STUBS (referenced internally) ──
+function showCreateFlow() {
+  document.getElementById('card-params').classList.remove('hidden');
+  document.getElementById('card-params').scrollIntoView({behavior:'smooth', block:'start'});
+  loadFolders();
+  ensureAcCache(); // pre-warm autocomplete cache in background
+}
+function openPanel() { openSearchPanel(); }
+function closePanel() { closeSearchPanel(); }
+function maybeClosePanel(e) { maybeCloseSearchPanel(e); }
+let _allPipelines = [];
+function loadPipelines() { loadAllPipelines(); }
+function filterPipelines() { filterSearchPanel(); }
+function renderPipelinesTable(p) { renderSearchTable(p); }
+function runFromPanel(){}
+function pollFromPanel(){}
+
+</script>
+</body>
+</html>
