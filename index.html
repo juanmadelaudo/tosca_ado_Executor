@@ -18,23 +18,23 @@
     background:radial-gradient(ellipse 55% 35% at 75% 5%,rgba(0,120,212,.13) 0%,transparent 60%),
                radial-gradient(ellipse 35% 25% at 5% 90%,rgba(80,230,255,.07) 0%,transparent 55%);}
   .wrap{max-width:780px;margin:0 auto;position:relative;z-index:1;}
- 
+
   header{margin-bottom:2.5rem;display:flex;align-items:flex-start;gap:14px;}
   .logo-icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;
     background:linear-gradient(135deg,#0078d4,#50e6ff);
     display:flex;align-items:center;justify-content:center;font-size:20px;}
   h1{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;}
   .subtitle{font-size:12px;color:var(--muted2);font-family:'DM Mono',monospace;}
- 
+
   /* stepper removed */
- 
+
   /* CARDS */
   .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
   .card.hidden{display:none;}
   .card-title{font-size:10px;font-weight:500;letter-spacing:1.4px;text-transform:uppercase;
     color:var(--muted);margin-bottom:1.25rem;display:flex;align-items:center;gap:10px;}
   .card-title::after{content:'';flex:1;height:1px;background:var(--border);}
- 
+
   /* MODE TOGGLE */
   .mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.5rem;}
   .mode-btn{padding:12px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--border);
@@ -45,7 +45,7 @@
   .mode-btn.selected{border-color:var(--accent);background:rgba(0,120,212,.1);color:var(--text);}
   .mode-btn.selected .mode-desc{color:var(--info);}
   .mode-btn:hover:not(.selected){border-color:var(--border-h);}
- 
+
   /* FORM */
   .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .field{margin-bottom:14px;}
@@ -63,7 +63,7 @@
   input[type="password"]{letter-spacing:3px;}
   select option{background:#1a1e28;}
   .hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:5px;}
- 
+
   /* BUTTONS */
   .btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px;}
   button{padding:10px 20px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:500;
@@ -78,7 +78,7 @@
   .btn-ok:hover:not(:disabled){background:rgba(74,222,128,.2);}
   .btn-run{background:rgba(0,120,212,.15);border-color:rgba(0,120,212,.4);color:var(--accent);}
   .btn-run:hover:not(:disabled){background:rgba(0,120,212,.25);}
- 
+
   /* MESSAGES */
   .msg{font-size:12px;padding:10px 14px;border-radius:8px;font-family:'DM Mono',monospace;
     margin-top:10px;display:none;line-height:1.6;}
@@ -86,14 +86,14 @@
   .msg.err {background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--err); display:block;}
   .msg.info{background:rgba(96,165,250,.08); border:1px solid rgba(96,165,250,.25); color:var(--info);display:block;}
   .msg.warn{background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.25); color:var(--warn);display:block;}
- 
+
   /* LOG */
   .log-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
     padding:.75rem 1rem;margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;
     line-height:1.9;color:var(--muted2);display:none;max-height:180px;overflow-y:auto;}
   .log-box.show{display:block;}
   .log-ok{color:var(--ok);}.log-err{color:var(--err);}.log-info{color:var(--info);}.log-warn{color:var(--warn);}
- 
+
   /* YAML */
   .yaml-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:1rem;}
   .yaml-header{display:flex;align-items:center;justify-content:space-between;
@@ -107,7 +107,7 @@
     color:var(--text);overflow-x:auto;max-height:480px;overflow-y:auto;white-space:pre;}
   .y-key{color:#60a5fa;}.y-val{color:#a3e635;}.y-str{color:#fde68a;}
   .y-sym{color:var(--muted2);}.y-com{color:var(--muted);font-style:italic;}.y-task{color:#f9a8d4;}
- 
+
   /* RESULT */
   .result-card{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:1.25rem;margin-top:1rem;}
   .result-title{font-size:13px;font-weight:500;color:var(--ok);margin-bottom:10px;}
@@ -115,14 +115,14 @@
   .result-val{color:var(--text);}
   .result-link{color:var(--info);text-decoration:none;}
   .result-link:hover{text-decoration:underline;}
- 
+
   .divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0;}
   .spinner{display:inline-block;width:13px;height:13px;
     border:2px solid rgba(255,255,255,.15);border-top-color:#fff;
     border-radius:50%;animation:spin .7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   footer{text-align:center;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3rem;}
- 
+
   /* PIPELINE NAME VALIDATION */
   .name-checking { border-color: var(--warn) !important; }
   .name-taken    { border-color: var(--err) !important; box-shadow: 0 0 0 3px rgba(248,113,113,.15) !important; }
@@ -132,7 +132,7 @@
   .name-hint.ok   { color:var(--ok); }
   .name-hint.err  { color:var(--err); }
   .name-hint.warn { color:var(--warn); }
- 
+
   /* PIPELINES PANEL */
   .panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:3rem; }
   .panel-overlay.open { display:flex; }
@@ -170,7 +170,7 @@
   .name-ac-item .ac-id { font-size:10px; color:var(--muted2); white-space:nowrap; }
   .name-ac-item .ac-exact { font-size:10px; padding:1px 6px; border-radius:3px; background:rgba(248,113,113,.18); color:var(--err); border:1px solid rgba(248,113,113,.3); white-space:nowrap; }
   .name-ac-header { padding:6px 14px; font-size:10px; letter-spacing:.7px; text-transform:uppercase; color:var(--muted); font-weight:500; border-bottom:1px solid var(--border); }
- 
+
   /* NAME-TAKEN POPUP */
   .nt-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; display:none; align-items:center; justify-content:center; padding:1rem; }
   .nt-overlay.open { display:flex; }
@@ -185,12 +185,12 @@
   .nt-run-status { margin-top:1rem; font-family:'DM Mono',monospace; font-size:12px; }
   .nt-close { position:absolute; top:1rem; right:1rem; background:none; border:none; color:var(--muted2); font-size:18px; cursor:pointer; padding:2px 8px; border-radius:5px; }
   .nt-close:hover { background:var(--surface2); color:var(--text); }
- 
+
   .btn-panel { background:rgba(167,139,250,.12); border-color:rgba(167,139,250,.3); color:var(--purple); }
   .btn-panel:hover:not(:disabled) { background:rgba(167,139,250,.2); }
   .btn-execs { background:rgba(251,191,36,.10); border-color:rgba(251,191,36,.3); color:var(--warn); }
   .btn-execs:hover:not(:disabled) { background:rgba(251,191,36,.2); }
- 
+
   /* EXEC TABLE */
   .exec-table { width:100%; border-collapse:collapse; font-size:12px; font-family:'DM Mono',monospace; }
   .exec-table th { text-align:left; font-size:10px; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); padding:6px 10px; border-bottom:1px solid var(--border); font-weight:500; }
@@ -202,7 +202,7 @@
   .exec-btn-cancel { font-size:11px; padding:3px 10px; border-radius:5px; cursor:pointer; border:1px solid rgba(248,113,113,.4); background:rgba(248,113,113,.12); color:var(--err); font-family:'DM Mono',monospace; white-space:nowrap; }
   .exec-btn-cancel:hover:not(:disabled){ background:rgba(248,113,113,.22); }
   .exec-btn-run:disabled, .exec-btn-cancel:disabled { opacity:.45; cursor:not-allowed; }
- 
+
   /* SEARCH PANEL — no run col */
   .search-panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:3rem; }
   .search-panel-overlay.open { display:flex; }
@@ -213,7 +213,7 @@
 </head>
 <body>
 <div class="wrap">
- 
+
   <header>
     <div class="logo-icon">⚡</div>
     <div>
@@ -221,9 +221,9 @@
       <div class="subtitle">// Azure DevOps · CIO Automation23 · tosca_execution_client_v3.ps1</div>
     </div>
   </header>
- 
- 
- 
+
+
+
   <!-- STEP 1: CONEXIÓN -->
   <div class="card" id="card-conn">
     <div class="card-title">🔌 01 · Connection Azure DevOps</div>
@@ -255,11 +255,11 @@
       </button>
     </div>
   </div>
- 
+
   <!-- STEP 2: PARÁMETROS -->
   <div class="card hidden" id="card-params">
     <div class="card-title">⚙️ 02 · Parameters del Pipeline</div>
- 
+
     <!-- MODE SELECTOR -->
     <div style="margin-bottom:1.25rem;display:inline-flex;align-items:center;gap:10px;padding:9px 16px;border-radius:8px;background:rgba(0,120,212,.1);border:1px solid rgba(0,120,212,.25);">
       <span style="font-size:16px;">🧩</span>
@@ -268,9 +268,9 @@
         <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--info);">No YAML file · tasks defined directly via API</div>
       </div>
     </div>
- 
+
     <hr class="divider"/>
- 
+
     <div class="row">
       <div class="field">
         <label>PIPELINE NAME <span class="req">*</span></label>
@@ -285,7 +285,7 @@
         <input type="text" id="processArea" value="TechSupport"/>
       </div>
     </div>
- 
+
     <div class="field">
       <label>PIPELINE FOLDER <span class="req">*</span></label>
       <select id="pipelineFolder" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;">
@@ -293,20 +293,20 @@
       </select>
       <div id="folder-hint" style="font-size:11px;margin-top:4px;font-family:'DM Mono',monospace;color:var(--muted2);"></div>
     </div>
- 
+
     <div class="field">
       <label>REQUESTOR <span class="req">*</span></label>
       <input type="text" id="requestor" value="Juan.manuel.delaudo@accenture.com"/>
     </div>
- 
+
     <div class="field">
       <label>UNIQUE ID <span class="req">*</span> <span class="manual-badge">manual input</span></label>
       <input type="text" id="uniqueId" placeholder="Ej: 3a12f1d5-e392-bc8d-f623-5e5a7b306413"/>
       <div class="hint">Value provided as data input · unique per execution</div>
     </div>
- 
+
     <hr class="divider"/>
- 
+
     <div class="row">
       <div class="field">
         <label>FOLDER PATH</label>
@@ -317,17 +317,17 @@
         <input type="text" id="resultFileName" value="result.xml"/>
       </div>
     </div>
- 
+
     <div class="btn-row">
       <button onclick="previewPipeline()" class="btn-accent" id="btn-preview">→ Preview</button>
     </div>
     <div id="params-msg" class="msg"></div>
   </div>
- 
+
   <!-- STEP 3: PREVIEW -->
   <div class="card hidden" id="card-preview">
     <div class="card-title" id="preview-title">📄 03 · Preview</div>
- 
+
     <!-- YAML mode preview -->
     <div id="preview-yaml-section">
       <div id="template-source" class="msg info" style="display:block;margin-bottom:.75rem;"></div>
@@ -339,7 +339,7 @@
         <pre id="yaml-pre"></pre>
       </div>
     </div>
- 
+
     <!-- CLASSIC mode preview -->
     <div id="preview-classic-section" style="display:none;">
       <div class="msg info" style="display:block;margin-bottom:.75rem;">
@@ -347,7 +347,7 @@
       </div>
       <div id="classic-summary"></div>
     </div>
- 
+
     <div class="btn-row" style="margin-top:1.25rem;">
       <button onclick="createPipeline()" id="btn-create" class="btn-accent">☁ Create Pipeline en Azure DevOps</button>
       <button onclick="resetParams()">↩ Edit Parameters</button>
@@ -356,9 +356,9 @@
     <div id="log-box" class="log-box"></div>
     <div id="result-area"></div>
   </div>
- 
+
 </div>
- 
+
   <!-- SEARCH PIPELINES PANEL -->
   <div class="search-panel-overlay" id="search-panel-overlay" onclick="maybeCloseSearchPanel(event)">
     <div class="panel-box">
@@ -376,7 +376,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- LAST EXECUTIONS PANEL -->
   <div class="exec-panel-overlay" id="exec-panel-overlay" onclick="maybeCloseExecPanel(event)">
     <div class="exec-panel-box">
@@ -393,7 +393,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- NAME-TAKEN POPUP -->
   <div class="nt-overlay" id="nt-overlay" onclick="maybeCloseNtPopup(event)">
     <div class="nt-box">
@@ -401,14 +401,14 @@
       <div class="nt-icon">⚠️</div>
       <div class="nt-title">Pipeline already exists</div>
       <div class="nt-sub">This pipeline already exists in Azure DevOps. You can update its variables and run it directly.</div>
- 
+
       <div class="nt-info">
         <div style="display:flex;gap:16px;flex-wrap:wrap;">
           <div><span>Name · </span><strong id="nt-name">—</strong></div>
           <div><span>ID · </span><strong id="nt-id">—</strong></div>
         </div>
       </div>
- 
+
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
         <div>
           <label style="font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);font-weight:500;display:block;margin-bottom:4px;">UniqueID</label>
@@ -421,9 +421,9 @@
           <div id="nt-requestor-hint" style="font-size:10px;color:var(--muted2);margin-top:3px;font-family:'DM Mono',monospace;"></div>
         </div>
       </div>
- 
+
       <div id="nt-load-hint" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted2);margin-bottom:10px;min-height:16px;"></div>
- 
+
       <div class="nt-actions">
         <button id="nt-run-btn" onclick="runExistingFromPopup()" class="btn-accent" style="flex:1;justify-content:center;">▶ Update &amp; Run</button>
         <button onclick="closeNtPopup()" style="flex:1;justify-content:center;">↩ Choose another name</button>
@@ -431,10 +431,10 @@
       <div class="nt-run-status" id="nt-run-status"></div>
     </div>
   </div>
- 
+
   <!-- LEGACY PANEL (kept for internal compatibility) -->
   <div class="panel-overlay" id="panel-overlay" style="display:none!important;"></div>
- 
+
   <!-- EXEC RUN POPUP -->
   <div class="nt-overlay" id="er-overlay" onclick="maybeCloseErPopup(event)" style="z-index:210;">
     <div class="nt-box">
@@ -442,14 +442,14 @@
       <div class="nt-icon">▶️</div>
       <div class="nt-title">Run Pipeline</div>
       <div class="nt-sub">Review and edit the variables before launching a new execution.</div>
- 
+
       <div class="nt-info">
         <div style="display:flex;gap:16px;flex-wrap:wrap;">
           <div><span>Pipeline · </span><strong id="er-name">—</strong></div>
           <div><span>Def ID · </span><strong id="er-defid">—</strong></div>
         </div>
       </div>
- 
+
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
         <div>
           <label style="font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);font-weight:500;display:block;margin-bottom:4px;">UniqueID</label>
@@ -462,9 +462,9 @@
           <div id="er-requestor-hint" style="font-size:10px;color:var(--muted2);margin-top:3px;font-family:'DM Mono',monospace;"></div>
         </div>
       </div>
- 
+
       <div id="er-load-hint" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted2);margin-bottom:10px;min-height:16px;"></div>
- 
+
       <div class="nt-actions">
         <button id="er-run-btn" onclick="execRunFromPopup()" class="btn-accent" style="flex:1;justify-content:center;">▶ Update &amp; Run</button>
         <button onclick="closeErPopup()" style="flex:1;justify-content:center;">✕ Cancel</button>
@@ -472,15 +472,15 @@
       <div class="nt-run-status" id="er-run-status"></div>
     </div>
   </div>
- 
+
 <footer>open locally in your browser · no data is stored · PAT kept in session memory only</footer>
- 
+
 <script>
 let isConnected = false;
 let currentYaml = '';
 let repoCache = null;
 let currentMode = 'classic';
- 
+
 // ── HELPERS ──
 function v(id){ return document.getElementById(id).value.trim(); }
 function enc(s){ return encodeURIComponent(s); }
@@ -491,14 +491,14 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function logClear(){ const b=document.getElementById('log-box'); b.innerHTML=''; b.classList.add('show'); }
 function logLine(t,c=''){ const b=document.getElementById('log-box'); b.innerHTML+=`<div class="${c}">${esc(t)}</div>`; b.scrollTop=b.scrollHeight; }
 function sanitize(n){ return n.replace(/[^a-zA-Z0-9\-_]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''); }
- 
+
 // ── MODE TOGGLE ──
 function setMode(mode){
   currentMode = mode;
   document.getElementById('mode-yaml').classList.toggle('selected', mode==='yaml');
   document.getElementById('mode-classic').classList.toggle('selected', mode==='classic');
 }
- 
+
 // ── STEP 1: CONNECT ──
 async function testConnection(){
   const org=v('org'),project=v('project'),pat=v('pat');
@@ -521,7 +521,7 @@ async function testConnection(){
       setMsg('conn-msg',`✓ Connection successful${note}`,'ok');
       document.getElementById('top-nav').style.display='flex';
       setStep(2);
- 
+
     } else {
       const e=await res.json().catch(()=>({}));
       setMsg('conn-msg',`Error ${res.status}: ${e.message||'Check your PAT and permissions.'}`, 'err');
@@ -531,7 +531,7 @@ async function testConnection(){
   }
   btn.disabled=false; btn.innerHTML='⚡ Test Connection';
 }
- 
+
 // ── FETCH TEMPLATE ──
 async function fetchTemplate(repo){
   const org=v('org'),project=v('project');
@@ -542,14 +542,14 @@ async function fetchTemplate(repo){
   if(!res.ok) throw new Error(`Could not find Sandbox/PipelineTemplate.yml (HTTP ${res.status})`);
   return await res.text();
 }
- 
+
 function injectVars(template, vars){
   const block=`variables:\n  FolderPath: '${vars.folderPath}'\n  ResultFileName: '${vars.resultFileName}'\n  UniqueID: '${vars.uniqueId}'\n  ProcessArea: '${vars.processArea}'\n  Requestor: '${vars.requestor}'`;
   let r=template.replace(/^variables:[\s\S]*?(?=^\w)/m, block+'\n\n');
   if(r===template) r=template.replace(/(^pool:[\s\S]*?\n\n)/m,`$1${block}\n\n`);
   return r;
 }
- 
+
 // ── STEP 2: PREVIEW ──
 async function previewPipeline(){
   if(!v('pipelineName')){setMsg('params-msg','Enter a pipeline name.','err');return;}
@@ -560,10 +560,10 @@ async function previewPipeline(){
   if(!folderSel || !folderSel.value){
     setMsg('params-msg','Please select a Pipeline Folder.','err');folderSel&&folderSel.focus();return;
   }
- 
+
   const btn=document.getElementById('btn-preview');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Checking name...';
- 
+
   // ── Always verify the name against the API before proceeding ──
   try {
     const org=v('org'), project=v('project'), name=v('pipelineName');
@@ -600,9 +600,9 @@ async function previewPipeline(){
   } catch(e) {
     // Non-blocking: if the check fails we allow proceeding (will fail at creation anyway)
   }
- 
+
   btn.innerHTML='<span class="spinner"></span> Preparing...';
- 
+
   const vars={
     folderPath:     v('folderPath')||'c:\\tempresults\\results',
     resultFileName: v('resultFileName')||'',
@@ -611,13 +611,13 @@ async function previewPipeline(){
     requestor:      v('requestor'),
     pipelineFolder: (document.getElementById('pipelineFolder') && document.getElementById('pipelineFolder').value) || '\\'
   };
- 
+
   try{
     if(currentMode==='yaml'){
       document.getElementById('preview-yaml-section').style.display='block';
       document.getElementById('preview-classic-section').style.display='none';
       document.getElementById('preview-title').textContent='📄 03 · YAML Preview';
- 
+
       let tpl; let fromRepo=false;
       if(repoCache){
         try{ tpl=await fetchTemplate(repoCache); fromRepo=true; }
@@ -628,18 +628,18 @@ async function previewPipeline(){
           document.getElementById('template-source').style.display='block';
         }
       } else { tpl=builtInTemplate(); }
- 
+
       if(fromRepo){
         document.getElementById('template-source').textContent=`✓ Template loaded from: ${repoCache.name} / Sandbox/PipelineTemplate.yml`;
         document.getElementById('template-source').className='msg ok';
         document.getElementById('template-source').style.display='block';
       }
- 
+
       currentYaml=injectVars(tpl,vars);
       const fname=sanitize(v('pipelineName'))+'.yml';
       document.getElementById('yaml-filename').textContent=`Sandbox/${fname}`;
       document.getElementById('yaml-pre').innerHTML=syntaxHighlight(currentYaml);
- 
+
     } else {
       // CLASSIC MODE
       document.getElementById('preview-yaml-section').style.display='none';
@@ -647,7 +647,7 @@ async function previewPipeline(){
       document.getElementById('preview-title').textContent='🧩 03 · Classic Pipeline Preview';
       document.getElementById('classic-summary').innerHTML=buildClassicSummary(vars);
     }
- 
+
     document.getElementById('params-msg').className='msg';
     setStep(3);
     document.getElementById('card-preview').classList.remove('hidden');
@@ -657,7 +657,7 @@ async function previewPipeline(){
   }
   btn.disabled=false; btn.innerHTML='→ Preview';
 }
- 
+
 function buildClassicSummary(vars){
   const rows=[
     ['Pipeline name', v('pipelineName')],
@@ -688,14 +688,14 @@ function buildClassicSummary(vars){
       </div>
     </div>`;
 }
- 
+
 function copyYaml(){
   navigator.clipboard.writeText(currentYaml).then(()=>{
     const b=document.querySelector('.yaml-copy'); b.textContent='✓ Copiado';
     setTimeout(()=>b.textContent='⎘ Copy YAML',2000);
   });
 }
- 
+
 function resetParams(){
   document.getElementById('card-preview').classList.add('hidden');
   document.getElementById('result-area').innerHTML='';
@@ -705,7 +705,7 @@ function resetParams(){
   setStep(2);
   document.getElementById('card-params').scrollIntoView({behavior:'smooth',block:'start'});
 }
- 
+
 // ── STEP 3: CREATE ──
 async function createPipeline(){
   if(!isConnected){setMsg('create-msg','Please verify the connection first (step 1).','err');return;}
@@ -715,7 +715,7 @@ async function createPipeline(){
   document.getElementById('create-msg').className='msg';
   document.getElementById('result-area').innerHTML='';
   logClear();
- 
+
   try{
     if(currentMode==='yaml'){
       await createYamlPipeline(org,project);
@@ -728,14 +728,14 @@ async function createPipeline(){
   }
   btn.disabled=false; btn.innerHTML='☁ Create Pipeline en Azure DevOps';
 }
- 
+
 // ── CREATE YAML PIPELINE ──
 async function createYamlPipeline(org,project){
   if(!repoCache) throw new Error('Repository not detected. Reconnect in step 1.');
- 
+
   const fname=sanitize(v('pipelineName'))+'.yml';
   const yamlPath=`Sandbox/${fname}`;
- 
+
   // 1. Get latest commit
   logLine(`1/4 Getting repo branch "${repoCache.name}"...`,'log-info');
   const branchName=(repoCache.defaultBranch||'refs/heads/main').replace('refs/heads/','');
@@ -746,7 +746,7 @@ async function createYamlPipeline(org,project){
   if(!statsRes.ok) throw new Error(`Could not get branch "${branchName}": HTTP ${statsRes.status}`);
   const latestCommit=(await statsRes.json()).commit.commitId;
   logLine(`   branch: ${branchName} · commit: ${latestCommit.substring(0,8)}...`,'log-ok');
- 
+
   // 2. Check if file exists
   logLine(`2/4 Checking "${yamlPath}"...`,'log-info');
   let fileExists=false;
@@ -758,7 +758,7 @@ async function createYamlPipeline(org,project){
     if(chk.ok){ fileExists=true; logLine(`   already exists → will be overwritten`,'log-warn'); }
     else logLine(`   does not exist → will be created`,'log-info');
   } catch(e){}
- 
+
   // 3. Push YAML
   logLine(`3/4 Saving "${yamlPath}" to the repo...`,'log-info');
   const pushBody={
@@ -779,7 +779,7 @@ async function createYamlPipeline(org,project){
   if(!pushRes.ok){const pe=await pushRes.json().catch(()=>({})); throw new Error(`Error saving file: ${pe.message||'HTTP '+pushRes.status}`);}
   const pushData=await pushRes.json();
   logLine(`   ✓ commit: ${pushData.commits?.[0]?.commitId?.substring(0,8)||'ok'}`,'log-ok');
- 
+
   // 4. Create definition
   logLine(`4/4 Creating pipeline definition...`,'log-info');
   const defBody={
@@ -793,11 +793,11 @@ async function createYamlPipeline(org,project){
   logLine(`   ✓ Pipeline created · ID: #${created.id}`,'log-ok');
   showResult(org,project,created,`Archivo: ${yamlPath}`);
 }
- 
+
 // ── CREATE CLASSIC PIPELINE ──
 async function createClassicPipeline(org,project){
   logLine(`1/2 Looking up agent queue "CIO Automation23"...`,'log-info');
- 
+
   // Get queue ID
   const qRes=await fetch(
     `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/distributedtask/queues?api-version=7.0`,
@@ -814,15 +814,15 @@ async function createClassicPipeline(org,project){
   } else {
     logLine(`   ⚠ Could not retrieve queues · using Default`,'log-warn');
   }
- 
+
   logLine(`2/2 Creating Classic pipeline...`,'log-info');
- 
+
   const uid=v('uniqueId');
   const processArea=v('processArea');
   const requestor=v('requestor');
   const folderPath=v('folderPath')||'c:\\tempresults\\results';
   const resultFile=v('resultFileName')||'';
- 
+
   // Classic pipeline body — process.type=1
   // Repository is required even for Classic pipelines (Azure DevOps API requirement)
   if(!repoCache) throw new Error('Repository not detected. Reconnect in step 1.');
@@ -895,12 +895,12 @@ async function createClassicPipeline(org,project){
     },
     variables:buildVarDefs()
   };
- 
+
   const created=await postDefinition(org,project,defBody);
   logLine(`   ✓ Classic pipeline created · ID: #${created.id}`,'log-ok');
   showResult(org,project,created,'Type: Classic (no YAML)');
 }
- 
+
 async function postDefinition(org,project,body){
   const res=await fetch(
     `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions?api-version=7.0`,
@@ -909,7 +909,7 @@ async function postDefinition(org,project,body){
   if(!res.ok){const e=await res.json().catch(()=>({})); throw new Error(e.message||`HTTP ${res.status}`);}
   return await res.json();
 }
- 
+
 function buildVarDefs(){
   return {
     FolderPath:     {value:v('folderPath')||'c:\\tempresults\\results',allowOverride:true},
@@ -919,7 +919,7 @@ function buildVarDefs(){
     Requestor:      {value:v('requestor'),                             allowOverride:true}
   };
 }
- 
+
 function showResult(org,project,created,extra){
   setStep(4);
   window._lastCreated = created;
@@ -945,15 +945,15 @@ function showResult(org,project,created,extra){
     </div>
     <div id="run-status"></div>`;
 }
- 
+
 async function runPipeline(){
   const org=window._lastOrg, project=window._lastProject, def=window._lastCreated;
   const btn=document.getElementById('btn-run');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Starting execution...';
- 
+
   const statusEl=document.getElementById('run-status');
   statusEl.innerHTML='';
- 
+
   try{
     // Queue a build run
     const queueRes=await fetch(
@@ -971,34 +971,34 @@ async function runPipeline(){
     const build=await queueRes.json();
     const buildId=build.id;
     const buildUrl=`https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${buildId}`;
- 
+
     statusEl.innerHTML=renderRunStatus('running', `Execution started · Build #${buildId}`, buildUrl);
     btn.innerHTML='<span class="spinner"></span> Running...';
- 
+
     // Poll build status
     await pollBuild(org, project, buildId, buildUrl, btn);
- 
+
   } catch(e){
     statusEl.innerHTML=renderRunStatus('error','Error starting execution: '+e.message,'');
     btn.disabled=false; btn.innerHTML='▶ Run Pipeline';
   }
 }
- 
+
 async function pollBuild(org, project, buildId, buildUrl, btn){
   const statusEl=document.getElementById('run-status');
   const maxWait=60*60*1000; // 1 hour max
   const interval=10000;     // poll every 10s
   const started=Date.now();
- 
+
   while(true){
     await new Promise(r=>setTimeout(r,interval));
- 
+
     if(Date.now()-started > maxWait){
       statusEl.innerHTML=renderRunStatus('error','Timeout reached (1h). Please check Azure DevOps.',buildUrl);
       btn.disabled=false; btn.innerHTML='▶ Run Pipeline';
       return;
     }
- 
+
     try{
       const res=await fetch(
         `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds/${buildId}?api-version=7.0`,
@@ -1009,7 +1009,7 @@ async function pollBuild(org, project, buildId, buildUrl, btn){
       const status=build.status;     // inProgress, completed, notStarted
       const result=build.result;     // succeeded, failed, canceled, partiallySucceeded
       const elapsed=Math.round((Date.now()-started)/1000);
- 
+
       if(status==='completed'){
         if(result==='succeeded'){
           statusEl.innerHTML=renderRunStatus('success',`✓ Execution completed successfully · Build #${buildId} · ${elapsed}s`,buildUrl);
@@ -1027,7 +1027,7 @@ async function pollBuild(org, project, buildId, buildUrl, btn){
     } catch(e){ /* ignore transient errors */ }
   }
 }
- 
+
 function renderRunStatus(type, text, url){
   const colors={
     success:{bg:'rgba(74,222,128,.08)',border:'rgba(74,222,128,.25)',color:'var(--ok)',icon:'✓'},
@@ -1041,7 +1041,7 @@ function renderRunStatus(type, text, url){
     <span>${c.icon} ${esc(text)}</span>${link}
   </div>`;
 }
- 
+
 function newPipeline(){
   ['result-area'].forEach(id=>document.getElementById(id).innerHTML='');
   ['create-msg','params-msg'].forEach(id=>document.getElementById(id).className='msg');
@@ -1052,12 +1052,12 @@ function newPipeline(){
   setStep(2);
   document.getElementById('card-params').scrollIntoView({behavior:'smooth',block:'start'});
 }
- 
+
 // ── BUILT-IN TEMPLATE ──
 function builtInTemplate(){
   return `pool:\n  name: CIO Automation23\nvariables:\n  FolderPath: 'c:\\tempresults\\results'\n  ResultFileName: ''\n  UniqueID: ''\n  ProcessArea: ''\n\nsteps:\n- task: PowerShell@2\n  displayName: 'Execute E2G API'\n  inputs:\n    targetType: filePath\n    filePath: 'tosca_execution_client_v3.ps1'\n    arguments: '-resultsFolderPath "\$(FolderPath)" -resultsFileName "\$(ResultFileName)" -events "[{""eventID"": ""\$(UniqueID)""}]" -characteristics "[{""AgentCharacteristics"":""AgentIdentifier=\$(Agent.MachineName)-A05080DIRPPAMAUTO""}]" -ScriptName "\$(Build.DefinitionName)" -ProcessArea "\$(ProcessArea)"'\n\n- task: PublishTestResults@2\n  displayName: 'Publish Test Results'\n  inputs:\n    testResultsFiles: '\$(ResultFileName)'\n    searchFolder: '\$(FolderPath)'\n    failTaskOnFailedTests: true\n\n- task: CopyFiles@2\n  displayName: 'Copy Files to: \$(build.artifactstagingdirectory)'\n  inputs:\n    SourceFolder: '\$(FolderPath)'\n    Contents: '\$(ResultFileName)'\n    TargetFolder: '\$(build.artifactstagingdirectory)'\n  condition: always()\n\n- task: PublishBuildArtifacts@1\n  displayName: 'Publish Artifact'\n  inputs:\n    ArtifactName: 'Evidence \$(ResultFileName)'\n  condition: always()\n\n- task: epsteam.EmailReportExtension.EmailReport.EmailReportV2@2\n  displayName: 'Send Email Report'\n  inputs:\n    subject: '\$(Build.DefinitionName) {passPercentage} tests passed'\n    toAddress: '\$(Requestor)'\n    ccAddress: 'CIO.SAP.Automate.Test.ExecutionTeam@accenture.com'\n    defaultDomain: 'automated.testresult@accenture.com'\n    includeResultsStr: '1,2'\n    includeCommits: false\n    enableTLS: false\n    smtpConnectionEndpoint: 'CIO SAP AUTOMATION'\n  condition: always()\n`;
 }
- 
+
 function syntaxHighlight(yaml){
   return yaml.split('\n').map(line=>{
     const e=esc(line);
@@ -1075,13 +1075,13 @@ function syntaxHighlight(yaml){
     return e;
   }).join('\n');
 }
- 
+
 // ── FOLDER LOADER ──
 function loadFolders() {
   const sel = document.getElementById('pipelineFolder');
   const hint = document.getElementById('folder-hint');
   if (!sel) return;
- 
+
   const folders = [
     '\\BASIS',
     '\\CAM',
@@ -1103,7 +1103,7 @@ function loadFolders() {
     '\\Treasury',
     '\\UTILITIES',
   ];
- 
+
   sel.innerHTML = '<option value="">— Select a folder —</option>';
   folders.forEach(path => {
     const opt = document.createElement('option');
@@ -1114,18 +1114,18 @@ function loadFolders() {
   sel.disabled = false;
   if (hint) { hint.textContent = `${folders.length} folders available`; hint.style.color = 'var(--muted2)'; }
 }
- 
+
 // ── PIPELINE NAME AUTOCOMPLETE + VALIDATION ──
 let _acDebounce    = null;
 let _acActiveIdx   = -1;
 let _nameCheckTimer     = null;
 let _nameTakenPipeline  = null;
- 
+
 function onPipelineNameInput(raw) {
   const q = raw.trim();
   const inp  = document.getElementById('pipelineName');
   const hint = document.getElementById('name-hint');
- 
+
   // Reset
   clearTimeout(_acDebounce);
   clearTimeout(_nameCheckTimer);
@@ -1134,23 +1134,23 @@ function onPipelineNameInput(raw) {
   hint.textContent = '';
   hint.className = 'name-hint';
   closeAcDrop();
- 
+
   if (q.length < 3) return;
- 
+
   // Show "searching" hint immediately
   hint.textContent = '⟳ Searching...';
   hint.className = 'name-hint warn show';
- 
+
   _acDebounce = setTimeout(() => runNameSearch(q), 350);
 }
- 
+
 async function runNameSearch(q) {
   const inp  = document.getElementById('pipelineName');
   const hint = document.getElementById('name-hint');
- 
+
   // Guard: make sure we still have the same value
   if ((inp.value || '').trim() !== q) return;
- 
+
   const orgEl = document.getElementById('org');
   const projEl = document.getElementById('project');
   const patEl  = document.getElementById('pat');
@@ -1163,21 +1163,21 @@ async function runNameSearch(q) {
     hint.className = 'name-hint warn show';
     return;
   }
- 
+
   const headers = { 'Authorization': 'Basic ' + btoa(':' + pat) };
- 
+
   try {
     // Direct wildcard search — fast, no need to load everything first
     const url = `https://dev.azure.com/${encodeURIComponent(org)}/${encodeURIComponent(project)}/_apis/build/definitions?name=*${encodeURIComponent(q)}*&$top=20&api-version=7.0`;
     const r = await fetch(url, { headers });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const matches = ((await r.json()).value || []).map(d => ({ id: d.id, name: d.name }));
- 
+
     // Guard again after await
     if ((inp.value || '').trim() !== q) return;
- 
+
     openAcDrop(matches, q);
- 
+
     const exact = matches.find(p => p.name.toLowerCase() === q.toLowerCase());
     if (exact) {
       _nameTakenPipeline = { id: exact.id, name: exact.name };
@@ -1197,7 +1197,7 @@ async function runNameSearch(q) {
     hint.className = 'name-hint warn show';
   }
 }
- 
+
 function openAcDrop(items, query) {
   const drop = document.getElementById('name-ac-drop');
   if (!drop) return;
@@ -1222,13 +1222,13 @@ function openAcDrop(items, query) {
     `<div class="name-ac-header">${total} pipeline${total!==1?'s':''} match "<strong style="color:var(--text)">${esc(query)}</strong>"</div>${rows}${footer}`;
   drop.classList.add('open');
 }
- 
+
 function closeAcDrop() {
   const drop = document.getElementById('name-ac-drop');
   if (drop) { drop.classList.remove('open'); drop.innerHTML = ''; }
   _acActiveIdx = -1;
 }
- 
+
 function highlightMatch(name, query) {
   const idx = name.toLowerCase().indexOf(query.toLowerCase());
   if (idx === -1) return esc(name);
@@ -1236,7 +1236,7 @@ function highlightMatch(name, query) {
     `<strong style="color:var(--accent);">${esc(name.slice(idx, idx + query.length))}</strong>` +
     esc(name.slice(idx + query.length));
 }
- 
+
 function selectAcItem(e, name, id) {
   e.preventDefault();
   const inp  = document.getElementById('pipelineName');
@@ -1248,7 +1248,7 @@ function selectAcItem(e, name, id) {
   hint.innerHTML = `✗ Already exists (ID: #${id}) — <a href="#" onclick="openNtPopup();return false;" style="color:var(--warn);text-decoration:underline;">Run it?</a>`;
   hint.className = 'name-hint err show';
 }
- 
+
 function navigateAcDrop(e) {
   const drop = document.getElementById('name-ac-drop');
   if (!drop || !drop.classList.contains('open')) return;
@@ -1270,16 +1270,16 @@ function navigateAcDrop(e) {
   items.forEach((el, i) => el.classList.toggle('active', i === _acActiveIdx));
   if (items[_acActiveIdx]) items[_acActiveIdx].scrollIntoView({ block: 'nearest' });
 }
- 
+
 // checkPipelineName is now handled inline in runNameSearch.
 // Kept as stub so previewPipeline can still call it.
 async function checkPipelineName() {
   const q = (document.getElementById('pipelineName').value||'').trim();
   if (q.length >= 3) await runNameSearch(q);
 }
- 
+
 function initNameInput() { /* no-op: input wired via oninput attribute */ }
- 
+
 async function checkPipelineName() {
   const name = document.getElementById('pipelineName') && document.getElementById('pipelineName').value.trim();
   if (!name || name.length < 2) return;
@@ -1311,12 +1311,12 @@ async function checkPipelineName() {
     }
   } catch(e) { inp.className=''; hint.className='name-hint'; }
 }
- 
+
 // ── NAME-TAKEN POPUP ──
 async function openNtPopup() {
   if (!_nameTakenPipeline) return;
   const org = v('org'), project = v('project');
- 
+
   // Reset UI
   document.getElementById('nt-name').textContent = _nameTakenPipeline.name;
   document.getElementById('nt-id').textContent = '#' + _nameTakenPipeline.id;
@@ -1332,7 +1332,7 @@ async function openNtPopup() {
   btn.disabled = true;
   btn.innerHTML = '▶ Update & Run';
   document.getElementById('nt-overlay').classList.add('open');
- 
+
   // Fetch full definition to get current variable values
   try {
     const res = await fetch(
@@ -1342,12 +1342,12 @@ async function openNtPopup() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const def = await res.json();
     _nameTakenPipeline._fullDef = def; // store for PATCH later
- 
+
     const vars = def.variables || {};
     const currentUid       = (vars.UniqueID    && vars.UniqueID.value)    || '';
     const currentRequestor = (vars.Requestor   && vars.Requestor.value)   ||
                              (vars.requestor   && vars.requestor.value)   || '';
- 
+
     document.getElementById('nt-uniqueid').value = currentUid;
     document.getElementById('nt-requestor').value = currentRequestor;
     document.getElementById('nt-uniqueid').disabled = false;
@@ -1363,15 +1363,15 @@ async function openNtPopup() {
     btn.disabled = false;
   }
 }
- 
+
 function closeNtPopup() {
   document.getElementById('nt-overlay').classList.remove('open');
 }
- 
+
 function maybeCloseNtPopup(e) {
   if (e.target === document.getElementById('nt-overlay')) closeNtPopup();
 }
- 
+
 async function runExistingFromPopup() {
   if (!_nameTakenPipeline) return;
   const org = v('org'), project = v('project');
@@ -1380,11 +1380,11 @@ async function runExistingFromPopup() {
   const statusEl = document.getElementById('nt-run-status');
   const newUniqueId  = document.getElementById('nt-uniqueid').value.trim();
   const newRequestor = document.getElementById('nt-requestor').value.trim();
- 
+
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Updating variables...';
   statusEl.innerHTML = '';
- 
+
   try {
     // ── Step 1: PATCH definition with updated variables ──
     const fullDef = _nameTakenPipeline._fullDef;
@@ -1408,7 +1408,7 @@ async function runExistingFromPopup() {
       }
       statusEl.innerHTML = ntStatus('ok', '✓ Variables updated successfully', '');
     }
- 
+
     // ── Step 2: Queue the build ──
     btn.innerHTML = '<span class="spinner"></span> Starting...';
     const queueRes = await fetch(
@@ -1422,10 +1422,10 @@ async function runExistingFromPopup() {
     const build = await queueRes.json();
     const buildId = build.id;
     const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${buildId}`;
- 
+
     statusEl.innerHTML = ntStatus('running', `Execution started · Build #${buildId}`, buildUrl);
     btn.innerHTML = '<span class="spinner"></span> Running...';
- 
+
     // ── Step 3: Poll until completed ──
     const maxWait = 3600000, interval = 10000, started = Date.now();
     while (true) {
@@ -1461,7 +1461,7 @@ async function runExistingFromPopup() {
     btn.disabled = false; btn.innerHTML = '▶ Update & Run';
   }
 }
- 
+
 function ntStatus(type, text, url) {
   const c = {
     ok:      { bg:'rgba(74,222,128,.08)',  border:'rgba(74,222,128,.25)',  color:'var(--ok)' },
@@ -1474,17 +1474,17 @@ function ntStatus(type, text, url) {
     ${esc(text)}${link}
   </div>`;
 }
- 
+
 // ── SEARCH PIPELINES PANEL ──
 let _allSearchPipelines = [];
- 
+
 function openSearchPanel() {
   document.getElementById('search-panel-overlay').classList.add('open');
   if (_allSearchPipelines.length === 0) loadAllPipelines();
 }
 function closeSearchPanel() { document.getElementById('search-panel-overlay').classList.remove('open'); }
 function maybeCloseSearchPanel(e) { if (e.target === document.getElementById('search-panel-overlay')) closeSearchPanel(); }
- 
+
 async function loadAllPipelines() {
   const org = v('org'), project = v('project');
   const pc = document.getElementById('search-panel-content');
@@ -1506,21 +1506,21 @@ async function loadAllPipelines() {
       if (page.length < pageSize) break; // last page
       skip += pageSize;
     }
- 
+
     _allSearchPipelines = allDefs.map(d => ({
       id: d.id,
       name: d.name,
       path: d.path || '\\',
       variables: d.variables || {}
     }));
- 
+
     countEl.textContent = `${_allSearchPipelines.length} pipelines`;
     renderSearchTable(_allSearchPipelines);
   } catch(e) {
     pc.innerHTML = `<div class="panel-load-msg" style="color:var(--err);">Error: ${esc(e.message)}</div>`;
   }
 }
- 
+
 function filterSearchPanel() {
   const q = document.getElementById('search-panel-input').value.toLowerCase();
   if (!q) { renderSearchTable(_allSearchPipelines); return; }
@@ -1530,7 +1530,7 @@ function filterSearchPanel() {
   });
   renderSearchTable(filtered);
 }
- 
+
 function renderSearchTable(pipes) {
   const pc = document.getElementById('search-panel-content');
   if (!pipes.length) { pc.innerHTML = '<div class="panel-load-msg">No se encontraron pipelines.</div>'; return; }
@@ -1548,7 +1548,7 @@ function renderSearchTable(pipes) {
       <td><a href="${pipeUrl}" target="_blank" style="font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid rgba(0,120,212,.35);background:rgba(0,120,212,.12);color:var(--accent);font-family:'DM Mono',monospace;text-decoration:none;white-space:nowrap;">↗ Abrir</a></td>
     </tr>`;
   }).join('');
- 
+
   pc.innerHTML = `<table class="pipe-table">
     <thead><tr>
       <th>ID</th><th>Name</th><th>UniqueID</th><th>Process Area</th><th>Path</th><th>Acción</th>
@@ -1556,17 +1556,17 @@ function renderSearchTable(pipes) {
     <tbody>${rows}</tbody>
   </table>`;
 }
- 
+
 // ── LAST EXECUTIONS PANEL ──
 let _allExecutions = [];
- 
+
 function openExecutionsPanel() {
   document.getElementById('exec-panel-overlay').classList.add('open');
   loadLastExecutions();
 }
 function closeExecPanel() { document.getElementById('exec-panel-overlay').classList.remove('open'); }
 function maybeCloseExecPanel(e) { if (e.target === document.getElementById('exec-panel-overlay')) closeExecPanel(); }
- 
+
 async function loadLastExecutions() {
   const org = v('org'), project = v('project');
   const pc = document.getElementById('exec-panel-content');
@@ -1586,7 +1586,7 @@ async function loadLastExecutions() {
     pc.innerHTML = `<div class="panel-load-msg" style="color:var(--err);">Error: ${esc(e.message)}</div>`;
   }
 }
- 
+
 function filterExecutions() {
   const q = document.getElementById('exec-search-input').value.toLowerCase();
   if (!q) { renderExecutionsTable(_allExecutions); return; }
@@ -1598,12 +1598,12 @@ function filterExecutions() {
   });
   renderExecutionsTable(filtered);
 }
- 
+
 function renderExecutionsTable(builds) {
   const pc = document.getElementById('exec-panel-content');
   const org = v('org'), project = v('project');
   if (!builds.length) { pc.innerHTML = '<div class="panel-load-msg">No executions match the filter.</div>'; return; }
- 
+
   const rows = builds.map(b => {
     const isRunning = b.status === 'inProgress' || b.status === 'notStarted';
     let statusBadge, statusText;
@@ -1622,12 +1622,12 @@ function renderExecutionsTable(builds) {
     const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${b.id}`;
     const defUrl   = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build?definitionId=${b.definition.id}`;
     const requestedBy = (b.requestedFor && b.requestedFor.displayName) ? esc(b.requestedFor.displayName) : '—';
- 
+
     const cancelBtn = isRunning
       ? `<button class="exec-btn-cancel" id="exec-cancel-${b.id}" onclick="execCancel(${b.id},this)">■ Cancel</button>`
       : '';
     const runBtn = `<button class="exec-btn-run" id="exec-run-${b.definition.id}" onclick="execRun(${b.definition.id},'${esc(b.definition.name)}',this)">▶ Run</button>`;
- 
+
     return `<tr id="exec-row-${b.id}">
       <td style="color:var(--muted2);font-size:11px;"><a href="${buildUrl}" target="_blank" style="color:var(--info);text-decoration:none;">#${b.id} ↗</a></td>
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(b.definition.name)}">
@@ -1640,7 +1640,7 @@ function renderExecutionsTable(builds) {
       <td style="white-space:nowrap;display:flex;gap:5px;">${runBtn}${cancelBtn}</td>
     </tr>`;
   }).join('');
- 
+
   pc.innerHTML = `<table class="exec-table">
     <thead><tr>
       <th>Build</th><th>Pipeline</th><th>Status</th><th>Started</th><th>Finished</th><th>Requested by</th><th>Actions</th>
@@ -1648,17 +1648,17 @@ function renderExecutionsTable(builds) {
     <tbody>${rows}</tbody>
   </table>`;
 }
- 
+
 // ── RUN from executions panel — opens popup ──
 let _erDefId   = null;
 let _erDefName = null;
 let _erFullDef = null;
- 
+
 async function execRun(defId, defName, btn) {
   _erDefId   = defId;
   _erDefName = defName;
   _erFullDef = null;
- 
+
   // Reset popup UI
   document.getElementById('er-name').textContent  = defName;
   document.getElementById('er-defid').textContent = '#' + defId;
@@ -1674,7 +1674,7 @@ async function execRun(defId, defName, btn) {
   runBtn.disabled = true;
   runBtn.innerHTML = '▶ Update & Run';
   document.getElementById('er-overlay').classList.add('open');
- 
+
   // Fetch full definition
   const org = v('org'), project = v('project');
   try {
@@ -1685,11 +1685,11 @@ async function execRun(defId, defName, btn) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const def = await res.json();
     _erFullDef = def;
- 
+
     const vars = def.variables || {};
     const uid  = (vars.UniqueID  && vars.UniqueID.value)  || (vars.uniqueId  && vars.uniqueId.value)  || '';
     const req  = (vars.Requestor && vars.Requestor.value) || (vars.requestor && vars.requestor.value) || '';
- 
+
     document.getElementById('er-uniqueid').value   = uid;
     document.getElementById('er-requestor').value  = req;
     document.getElementById('er-uniqueid').disabled  = false;
@@ -1705,10 +1705,10 @@ async function execRun(defId, defName, btn) {
     runBtn.disabled = false;
   }
 }
- 
+
 function closeErPopup()       { document.getElementById('er-overlay').classList.remove('open'); }
 function maybeCloseErPopup(e) { if (e.target === document.getElementById('er-overlay')) closeErPopup(); }
- 
+
 async function execRunFromPopup() {
   if (!_erDefId) return;
   const org = v('org'), project = v('project');
@@ -1716,11 +1716,11 @@ async function execRunFromPopup() {
   const newReq = document.getElementById('er-requestor').value.trim();
   const btn    = document.getElementById('er-run-btn');
   const status = document.getElementById('er-run-status');
- 
+
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Updating...';
   status.innerHTML = '';
- 
+
   try {
     // Step 1: PATCH definition with updated variables
     if (_erFullDef) {
@@ -1740,7 +1740,7 @@ async function execRunFromPopup() {
       if (!patchRes.ok) { const pe=await patchRes.json().catch(()=>({})); throw new Error('Update failed: '+(pe.message||`HTTP ${patchRes.status}`)); }
       status.innerHTML = ntStatus('ok', '✓ Variables updated', '');
     }
- 
+
     // Step 2: Queue build
     btn.innerHTML = '<span class="spinner"></span> Starting...';
     const queueRes = await fetch(
@@ -1750,10 +1750,10 @@ async function execRunFromPopup() {
     if (!queueRes.ok) { const e=await queueRes.json().catch(()=>({})); throw new Error(e.message||`HTTP ${queueRes.status}`); }
     const build = await queueRes.json();
     const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${build.id}`;
- 
+
     status.innerHTML = ntStatus('running', `Execution started · Build #${build.id}`, buildUrl);
     btn.innerHTML = '<span class="spinner"></span> Running...';
- 
+
     // Step 3: Poll
     const maxWait = 3600000, interval = 10000, started = Date.now();
     while (true) {
@@ -1790,7 +1790,7 @@ async function execRunFromPopup() {
     btn.disabled = false; btn.innerHTML = '▶ Update & Run';
   }
 }
- 
+
 // ── CANCEL from executions panel ──
 async function execCancel(buildId, btn) {
   if (!confirm(`Cancel build #${buildId}?`)) return;
@@ -1816,7 +1816,7 @@ async function execCancel(buildId, btn) {
     btn.title = e.message;
   }
 }
- 
+
 // ── LEGACY STUBS (referenced internally) ──
 function showCreateFlow() {
   document.getElementById('card-params').classList.remove('hidden');
@@ -1833,7 +1833,7 @@ function filterPipelines() { filterSearchPanel(); }
 function renderPipelinesTable(p) { renderSearchTable(p); }
 function runFromPanel(){}
 function pollFromPanel(){}
- 
+
 </script>
 </body>
 </html>
