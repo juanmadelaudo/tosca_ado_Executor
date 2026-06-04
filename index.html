@@ -197,12 +197,18 @@
   .exec-table td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text); }
   .exec-table tr:last-child td { border-bottom:none; }
   .exec-table tr:hover td { background:var(--surface2); }
+  .exec-btn-run    { font-size:11px; padding:3px 10px; border-radius:5px; cursor:pointer; border:1px solid rgba(0,120,212,.4); background:rgba(0,120,212,.12); color:var(--accent); font-family:'DM Mono',monospace; white-space:nowrap; }
+  .exec-btn-run:hover:not(:disabled)   { background:rgba(0,120,212,.22); }
+  .exec-btn-cancel { font-size:11px; padding:3px 10px; border-radius:5px; cursor:pointer; border:1px solid rgba(248,113,113,.4); background:rgba(248,113,113,.12); color:var(--err); font-family:'DM Mono',monospace; white-space:nowrap; }
+  .exec-btn-cancel:hover:not(:disabled){ background:rgba(248,113,113,.22); }
+  .exec-btn-run:disabled, .exec-btn-cancel:disabled { opacity:.45; cursor:not-allowed; }
  
   /* SEARCH PANEL — no run col */
   .search-panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:3rem; }
   .search-panel-overlay.open { display:flex; }
-  .exec-panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:3rem; }
+  .exec-panel-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:2rem; }
   .exec-panel-overlay.open { display:flex; }
+  .exec-panel-box { background:var(--surface); border:1px solid var(--border-hover); border-radius:14px; width:min(1100px,97vw); max-height:88vh; display:flex; flex-direction:column; overflow:hidden; }
 </style>
 </head>
 <body>
@@ -233,7 +239,7 @@
     </div>
     <div class="field">
       <label>PERSONAL ACCESS TOKEN (PAT) <span class="req">*</span></label>
-      <input type="password" id="pat" placeholder="Pega tu PAT aquí" autocomplete="off"/>
+      <input type="password" id="pat" placeholder="Paste your PAT here" autocomplete="off"/>
       <div class="hint">Permissions: Code (Read &amp; Write) · Build (Read &amp; Execute)</div>
     </div>
     <div class="btn-row">
@@ -373,7 +379,7 @@
  
   <!-- LAST EXECUTIONS PANEL -->
   <div class="exec-panel-overlay" id="exec-panel-overlay" onclick="maybeCloseExecPanel(event)">
-    <div class="panel-box">
+    <div class="exec-panel-box">
       <div class="panel-hdr">
         <span class="panel-title">🕐 Last 80 Executions</span>
         <div style="display:flex;gap:8px;align-items:center;">
@@ -429,6 +435,44 @@
   <!-- LEGACY PANEL (kept for internal compatibility) -->
   <div class="panel-overlay" id="panel-overlay" style="display:none!important;"></div>
  
+  <!-- EXEC RUN POPUP -->
+  <div class="nt-overlay" id="er-overlay" onclick="maybeCloseErPopup(event)" style="z-index:210;">
+    <div class="nt-box">
+      <button class="nt-close" onclick="closeErPopup()">✕</button>
+      <div class="nt-icon">▶️</div>
+      <div class="nt-title">Run Pipeline</div>
+      <div class="nt-sub">Review and edit the variables before launching a new execution.</div>
+ 
+      <div class="nt-info">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div><span>Pipeline · </span><strong id="er-name">—</strong></div>
+          <div><span>Def ID · </span><strong id="er-defid">—</strong></div>
+        </div>
+      </div>
+ 
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
+        <div>
+          <label style="font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);font-weight:500;display:block;margin-bottom:4px;">UniqueID</label>
+          <input id="er-uniqueid" type="text" placeholder="Loading..." style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-family:'DM Mono',monospace;"/>
+          <div id="er-uniqueid-hint" style="font-size:10px;color:var(--muted2);margin-top:3px;font-family:'DM Mono',monospace;"></div>
+        </div>
+        <div>
+          <label style="font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);font-weight:500;display:block;margin-bottom:4px;">Requestor (mail)</label>
+          <input id="er-requestor" type="text" placeholder="Loading..." style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-family:'DM Mono',monospace;"/>
+          <div id="er-requestor-hint" style="font-size:10px;color:var(--muted2);margin-top:3px;font-family:'DM Mono',monospace;"></div>
+        </div>
+      </div>
+ 
+      <div id="er-load-hint" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted2);margin-bottom:10px;min-height:16px;"></div>
+ 
+      <div class="nt-actions">
+        <button id="er-run-btn" onclick="execRunFromPopup()" class="btn-accent" style="flex:1;justify-content:center;">▶ Update &amp; Run</button>
+        <button onclick="closeErPopup()" style="flex:1;justify-content:center;">✕ Cancel</button>
+      </div>
+      <div class="nt-run-status" id="er-run-status"></div>
+    </div>
+  </div>
+ 
 <footer>open locally in your browser · no data is stored · PAT kept in session memory only</footer>
  
 <script>
@@ -480,7 +524,7 @@ async function testConnection(){
  
     } else {
       const e=await res.json().catch(()=>({}));
-      setMsg('conn-msg',`Error ${res.status}: ${e.message||'Verifica PAT y permisos.'}`, 'err');
+      setMsg('conn-msg',`Error ${res.status}: ${e.message||'Check your PAT and permissions.'}`, 'err');
     }
   } catch(e){
     setMsg('conn-msg','Could not connect. Open this file locally in your browser (double-click).','err');
@@ -1561,8 +1605,9 @@ function renderExecutionsTable(builds) {
   if (!builds.length) { pc.innerHTML = '<div class="panel-load-msg">No executions match the filter.</div>'; return; }
  
   const rows = builds.map(b => {
+    const isRunning = b.status === 'inProgress' || b.status === 'notStarted';
     let statusBadge, statusText;
-    if (b.status === 'inProgress' || b.status === 'notStarted') {
+    if (isRunning) {
       statusBadge = 'running'; statusText = 'Running';
     } else {
       const r = b.result || 'unknown';
@@ -1577,24 +1622,199 @@ function renderExecutionsTable(builds) {
     const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${b.id}`;
     const defUrl   = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build?definitionId=${b.definition.id}`;
     const requestedBy = (b.requestedFor && b.requestedFor.displayName) ? esc(b.requestedFor.displayName) : '—';
-    return `<tr>
+ 
+    const cancelBtn = isRunning
+      ? `<button class="exec-btn-cancel" id="exec-cancel-${b.id}" onclick="execCancel(${b.id},this)">■ Cancel</button>`
+      : '';
+    const runBtn = `<button class="exec-btn-run" id="exec-run-${b.definition.id}" onclick="execRun(${b.definition.id},'${esc(b.definition.name)}',this)">▶ Run</button>`;
+ 
+    return `<tr id="exec-row-${b.id}">
       <td style="color:var(--muted2);font-size:11px;"><a href="${buildUrl}" target="_blank" style="color:var(--info);text-decoration:none;">#${b.id} ↗</a></td>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(b.definition.name)}">
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(b.definition.name)}">
         <a href="${defUrl}" target="_blank" style="color:var(--text);text-decoration:none;">${esc(b.definition.name)}</a>
       </td>
-      <td><span class="pipe-badge ${statusBadge}">${statusText}</span></td>
+      <td><span class="pipe-badge ${statusBadge}" id="exec-badge-${b.id}">${statusText}</span></td>
       <td style="color:var(--muted2);font-size:11px;">${queuedAt}</td>
       <td style="color:var(--muted2);font-size:11px;">${finishedAt}</td>
-      <td style="color:var(--muted2);font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${requestedBy}</td>
+      <td style="color:var(--muted2);font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${requestedBy}</td>
+      <td style="white-space:nowrap;display:flex;gap:5px;">${runBtn}${cancelBtn}</td>
     </tr>`;
   }).join('');
  
   pc.innerHTML = `<table class="exec-table">
     <thead><tr>
-      <th>Build</th><th>Pipeline</th><th>Status</th><th>Started</th><th>Finished</th><th>Requested by</th>
+      <th>Build</th><th>Pipeline</th><th>Status</th><th>Started</th><th>Finished</th><th>Requested by</th><th>Actions</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
+}
+ 
+// ── RUN from executions panel — opens popup ──
+let _erDefId   = null;
+let _erDefName = null;
+let _erFullDef = null;
+ 
+async function execRun(defId, defName, btn) {
+  _erDefId   = defId;
+  _erDefName = defName;
+  _erFullDef = null;
+ 
+  // Reset popup UI
+  document.getElementById('er-name').textContent  = defName;
+  document.getElementById('er-defid').textContent = '#' + defId;
+  document.getElementById('er-uniqueid').value    = '';
+  document.getElementById('er-requestor').value   = '';
+  document.getElementById('er-uniqueid').disabled  = true;
+  document.getElementById('er-requestor').disabled = true;
+  document.getElementById('er-uniqueid-hint').textContent  = '';
+  document.getElementById('er-requestor-hint').textContent = '';
+  document.getElementById('er-load-hint').textContent = '⟳ Loading current values...';
+  document.getElementById('er-run-status').innerHTML = '';
+  const runBtn = document.getElementById('er-run-btn');
+  runBtn.disabled = true;
+  runBtn.innerHTML = '▶ Update & Run';
+  document.getElementById('er-overlay').classList.add('open');
+ 
+  // Fetch full definition
+  const org = v('org'), project = v('project');
+  try {
+    const res = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions/${defId}?api-version=7.0`,
+      { headers: authHeader() }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const def = await res.json();
+    _erFullDef = def;
+ 
+    const vars = def.variables || {};
+    const uid  = (vars.UniqueID  && vars.UniqueID.value)  || (vars.uniqueId  && vars.uniqueId.value)  || '';
+    const req  = (vars.Requestor && vars.Requestor.value) || (vars.requestor && vars.requestor.value) || '';
+ 
+    document.getElementById('er-uniqueid').value   = uid;
+    document.getElementById('er-requestor').value  = req;
+    document.getElementById('er-uniqueid').disabled  = false;
+    document.getElementById('er-requestor').disabled = false;
+    document.getElementById('er-uniqueid-hint').textContent  = uid ? 'Current value loaded — edit if needed' : 'No value set — enter one';
+    document.getElementById('er-requestor-hint').textContent = req ? 'Current value loaded — edit if needed' : 'No value set — enter one';
+    document.getElementById('er-load-hint').textContent = '✓ Values loaded from Azure DevOps';
+    runBtn.disabled = false;
+  } catch(e) {
+    document.getElementById('er-load-hint').textContent = '⚠ Could not load values: ' + e.message + ' — you can still type them manually.';
+    document.getElementById('er-uniqueid').disabled  = false;
+    document.getElementById('er-requestor').disabled = false;
+    runBtn.disabled = false;
+  }
+}
+ 
+function closeErPopup()       { document.getElementById('er-overlay').classList.remove('open'); }
+function maybeCloseErPopup(e) { if (e.target === document.getElementById('er-overlay')) closeErPopup(); }
+ 
+async function execRunFromPopup() {
+  if (!_erDefId) return;
+  const org = v('org'), project = v('project');
+  const newUid = document.getElementById('er-uniqueid').value.trim();
+  const newReq = document.getElementById('er-requestor').value.trim();
+  const btn    = document.getElementById('er-run-btn');
+  const status = document.getElementById('er-run-status');
+ 
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Updating...';
+  status.innerHTML = '';
+ 
+  try {
+    // Step 1: PATCH definition with updated variables
+    if (_erFullDef) {
+      const vars = JSON.parse(JSON.stringify(_erFullDef.variables || {}));
+      if (newUid) {
+        const uidKey = vars.UniqueID ? 'UniqueID' : vars.uniqueId ? 'uniqueId' : 'UniqueID';
+        vars[uidKey] = { ...(vars[uidKey]||{}), value: newUid, allowOverride: true };
+      }
+      if (newReq) {
+        const reqKey = vars.Requestor ? 'Requestor' : vars.requestor ? 'requestor' : 'Requestor';
+        vars[reqKey] = { ...(vars[reqKey]||{}), value: newReq, allowOverride: true };
+      }
+      const patchRes = await fetch(
+        `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions/${_erDefId}?api-version=7.0`,
+        { method:'PUT', headers:{...authHeader(),'Content-Type':'application/json'}, body: JSON.stringify({..._erFullDef, variables: vars}) }
+      );
+      if (!patchRes.ok) { const pe=await patchRes.json().catch(()=>({})); throw new Error('Update failed: '+(pe.message||`HTTP ${patchRes.status}`)); }
+      status.innerHTML = ntStatus('ok', '✓ Variables updated', '');
+    }
+ 
+    // Step 2: Queue build
+    btn.innerHTML = '<span class="spinner"></span> Starting...';
+    const queueRes = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds?api-version=7.0`,
+      { method:'POST', headers:{...authHeader(),'Content-Type':'application/json'}, body: JSON.stringify({definition:{id:_erDefId}}) }
+    );
+    if (!queueRes.ok) { const e=await queueRes.json().catch(()=>({})); throw new Error(e.message||`HTTP ${queueRes.status}`); }
+    const build = await queueRes.json();
+    const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${build.id}`;
+ 
+    status.innerHTML = ntStatus('running', `Execution started · Build #${build.id}`, buildUrl);
+    btn.innerHTML = '<span class="spinner"></span> Running...';
+ 
+    // Step 3: Poll
+    const maxWait = 3600000, interval = 10000, started = Date.now();
+    while (true) {
+      await new Promise(r => setTimeout(r, interval));
+      if (Date.now() - started > maxWait) {
+        status.innerHTML = ntStatus('err', 'Timeout (1h). Check Azure DevOps.', buildUrl);
+        btn.disabled = false; btn.innerHTML = '▶ Update & Run'; break;
+      }
+      try {
+        const r = await fetch(
+          `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds/${build.id}?api-version=7.0`,
+          { headers: authHeader() }
+        );
+        if (!r.ok) continue;
+        const b = await r.json();
+        if (b.status === 'completed') {
+          const res = b.result || 'unknown';
+          const elapsed = Math.round((Date.now()-started)/1000);
+          if (res==='succeeded')            status.innerHTML = ntStatus('ok',   `✓ Completed · Build #${build.id} · ${elapsed}s`, buildUrl);
+          else if (res==='partiallySucceeded') status.innerHTML = ntStatus('warn',`⚠ Partial · Build #${build.id} · ${elapsed}s`, buildUrl);
+          else                              status.innerHTML = ntStatus('err',  `✗ ${res} · Build #${build.id} · ${elapsed}s`, buildUrl);
+          btn.disabled = false; btn.innerHTML = '▶ Run again';
+          // Refresh executions list
+          setTimeout(loadLastExecutions, 2000);
+          break;
+        } else {
+          const elapsed = Math.round((Date.now()-started)/1000);
+          status.innerHTML = ntStatus('running', `Running... Build #${build.id} · ${elapsed}s`, buildUrl);
+        }
+      } catch(e) { /* transient */ }
+    }
+  } catch(e) {
+    status.innerHTML = ntStatus('err', 'Error: ' + e.message, '');
+    btn.disabled = false; btn.innerHTML = '▶ Update & Run';
+  }
+}
+ 
+// ── CANCEL from executions panel ──
+async function execCancel(buildId, btn) {
+  if (!confirm(`Cancel build #${buildId}?`)) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  const org = v('org'), project = v('project');
+  try {
+    const res = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds/${buildId}?api-version=7.0`,
+      { method:'PATCH', headers:{...authHeader(),'Content-Type':'application/json'}, body:JSON.stringify({status:'cancelling'}) }
+    );
+    if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error(e.message||`HTTP ${res.status}`); }
+    btn.innerHTML = '✓ Cancelling';
+    btn.style.color = 'var(--muted2)';
+    // Update badge inline
+    const badge = document.getElementById(`exec-badge-${buildId}`);
+    if (badge) { badge.className = 'pipe-badge canceled'; badge.textContent = 'Cancelling...'; }
+    // Refresh after 4s
+    setTimeout(loadLastExecutions, 4000);
+  } catch(e) {
+    btn.innerHTML = '■ Cancel';
+    btn.disabled = false;
+    btn.title = e.message;
+  }
 }
  
 // ── LEGACY STUBS (referenced internally) ──
