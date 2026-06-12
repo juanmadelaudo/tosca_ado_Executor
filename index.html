@@ -194,24 +194,26 @@
   .btn-ops:hover:not(:disabled) { background:rgba(52,211,153,.2); }
 
   /* OPERATIONS PANEL */
-  .ops-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:2rem; }
+  .ops-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:100; display:none; align-items:center; justify-content:center; padding:0.6rem; }
   .ops-overlay.open { display:flex; }
-  .ops-box { background:var(--surface); border:1px solid var(--border-h); border-radius:16px; width:min(1300px,98vw); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
-  .ops-hdr { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.5rem; border-bottom:1px solid var(--border); flex-shrink:0; }
-  .ops-title { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
-  .ops-body { padding:1.25rem 1.5rem; overflow-y:auto; display:flex; flex-direction:column; gap:1.25rem; }
-  .ops-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.25rem; }
-  .ops-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; display:flex; flex-direction:column; gap:10px; }
-  .ops-card-title { font-size:13px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:7px; }
-  .ops-card-desc { font-size:11px; font-family:'DM Mono',monospace; color:var(--muted2); line-height:1.5; }
-  .ops-field label { font-size:10px; letter-spacing:.7px; text-transform:uppercase; color:var(--muted2); font-weight:500; display:block; margin-bottom:4px; }
-  .ops-field input { width:100%; padding:8px 11px; border-radius:7px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:12px; font-family:'DM Mono',monospace; }
-  .ops-field input:focus { outline:none; border-color:rgba(52,211,153,.5); box-shadow:0 0 0 3px rgba(52,211,153,.1); }
-  .ops-run-btn { margin-top:4px; padding:9px 14px; border-radius:8px; border:1px solid rgba(52,211,153,.35); background:rgba(52,211,153,.12); color:#34d399; font-size:12px; font-family:'DM Mono',monospace; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .ops-box { background:var(--surface); border:1px solid var(--border-h); border-radius:16px; width:min(1480px,99vw); height:calc(100vh - 1.2rem); display:flex; flex-direction:column; overflow:hidden; }
+  .ops-hdr { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.75rem; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .ops-title { font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .ops-body { flex:1; min-height:0; padding:1.25rem 1.75rem 1.25rem 1.75rem; display:flex; flex-direction:row; gap:1.5rem; overflow:hidden; }
+  .ops-left { flex:1; min-width:0; display:flex; flex-direction:column; gap:1.25rem; overflow-y:auto; padding-right:6px; }
+  .ops-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+  .ops-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:1.4rem; display:flex; flex-direction:column; gap:12px; }
+  .ops-card-title { font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:7px; }
+  .ops-card-desc { font-size:12px; font-family:'DM Mono',monospace; color:var(--muted2); line-height:1.6; }
+  .ops-field label { font-size:10px; letter-spacing:.7px; text-transform:uppercase; color:var(--muted2); font-weight:500; display:block; margin-bottom:5px; }
+  .ops-field input, .ops-field select { width:100%; padding:9px 12px; border-radius:7px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:13px; font-family:'DM Mono',monospace; }
+  .ops-field input:focus, .ops-field select:focus { outline:none; border-color:rgba(52,211,153,.5); box-shadow:0 0 0 3px rgba(52,211,153,.1); }
+  .ops-run-btn { margin-top:6px; padding:11px 14px; border-radius:8px; border:1px solid rgba(52,211,153,.35); background:rgba(52,211,153,.12); color:#34d399; font-size:13px; font-family:'DM Mono',monospace; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; }
   .ops-run-btn:hover:not(:disabled) { background:rgba(52,211,153,.22); }
   .ops-run-btn:disabled { opacity:.45; cursor:not-allowed; }
   .ops-status { font-size:11px; font-family:'DM Mono',monospace; min-height:14px; }
-  .ops-pipeline-ref { font-size:10px; font-family:'DM Mono',monospace; color:var(--muted2); padding:5px 9px; background:var(--surface); border-radius:5px; border:1px solid var(--border); display:flex; align-items:center; gap:5px; }
+  .ops-pipeline-ref { font-size:11px; font-family:'DM Mono',monospace; color:var(--muted2); padding:6px 10px; background:var(--surface); border-radius:6px; border:1px solid var(--border); display:flex; align-items:center; gap:6px; }
+  .ops-sidebar { width:370px; flex-shrink:0; display:flex; flex-direction:column; gap:12px; overflow-y:auto; padding-right:2px; }
 
   /* EXEC TABLE */
   .exec-table { width:100%; border-collapse:collapse; font-size:12px; font-family:'DM Mono',monospace; }
@@ -467,10 +469,8 @@
           <button class="panel-close" onclick="closeOpsPanel()">✕</button>
         </div>
       </div>
-      <div class="ops-body" style="flex-direction:row;align-items:flex-start;gap:1.25rem;padding:1.25rem 1.5rem;overflow-y:auto;">
-
-        <!-- LEFT: Operations -->
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1.25rem;">
+      <div class="ops-body">
+        <div class="ops-left">
         <div class="ops-grid">
 
           <!-- OP 1: Disconnect Users on RDS -->
@@ -576,7 +576,7 @@
                 <button type="button" onclick="sapSelectAll(true)" style="font-size:10px;padding:2px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);font-family:'DM Mono',monospace;">✓ All</button>
                 <button type="button" onclick="sapSelectAll(false)" style="font-size:10px;padding:2px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);font-family:'DM Mono',monospace;">✗ None</button>
               </div>
-              <div id="ops-2-computers" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;padding:8px;background:var(--surface);border:1px solid var(--border);border-radius:7px;">
+              <div id="ops-2-computers" style="display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:7px;">
               </div>
               <div id="ops-2-ComputerNames-preview" style="margin-top:5px;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted2);word-break:break-all;"></div>
             </div>
@@ -596,10 +596,10 @@
           </div>
 
         </div><!-- /ops-grid -->
-        </div><!-- /left column -->
+        </div><!-- /ops-left -->
 
         <!-- RIGHT: Machine Reference Sidebar -->
-        <div style="width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;position:sticky;top:0;">
+        <div class="ops-sidebar">
           <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);padding-bottom:6px;border-bottom:1px solid var(--border);">🖥️ Machine Reference</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             <span style="font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px;background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:var(--info);">WC = Worksoft Certify</span>
@@ -610,7 +610,7 @@
           <!-- AMZ VMs -->
           <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
             <div style="padding:6px 12px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted2);border-bottom:1px solid var(--border);background:var(--surface);">AMZ Automation VMs</div>
-            <div style="overflow-y:auto;max-height:310px;">
+            <div style="overflow-y:auto;">
               <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:'DM Mono',monospace;">
                 <thead><tr style="background:var(--surface);">
                   <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">Host</th>
@@ -2368,23 +2368,37 @@ async function runOperation(idx) {
   }
 
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Starting...';
+  btn.innerHTML = '<span class="spinner"></span> Updating variables...';
   status.innerHTML = '';
 
   try {
-    // Build variables override in correct Azure DevOps format
-    const variables = {};
+    // Step 1: GET full definition to get current variable structure
+    const defRes = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions/${defId}?api-version=7.0`,
+      { headers: authHeader() }
+    );
+    if (!defRes.ok) throw new Error(`Could not load definition: HTTP ${defRes.status}`);
+    const fullDef = await defRes.json();
+
+    // Step 2: Merge new values into existing variables
+    const vars = JSON.parse(JSON.stringify(fullDef.variables || {}));
     for (const [k, val] of Object.entries(varOverrides)) {
-      variables[k] = { value: val, allowOverride: true };
+      vars[k] = { ...(vars[k] || {}), value: val, allowOverride: true };
     }
 
+    // Step 3: PUT updated definition
+    const putRes = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions/${defId}?api-version=7.0`,
+      { method: 'PUT', headers: { ...authHeader(), 'Content-Type': 'application/json' }, body: JSON.stringify({ ...fullDef, variables: vars }) }
+    );
+    if (!putRes.ok) { const e=await putRes.json().catch(()=>({})); throw new Error('Update failed: '+(e.message||`HTTP ${putRes.status}`)); }
+    status.innerHTML = opsStatus('ok', '✓ Variables updated', '');
+
+    // Step 4: Queue the build
+    btn.innerHTML = '<span class="spinner"></span> Starting...';
     const queueRes = await fetch(
       `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds?api-version=7.0`,
-      {
-        method: 'POST',
-        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ definition: { id: defId }, variables })
-      }
+      { method: 'POST', headers: { ...authHeader(), 'Content-Type': 'application/json' }, body: JSON.stringify({ definition: { id: defId } }) }
     );
     if (!queueRes.ok) { const e=await queueRes.json().catch(()=>({})); throw new Error(e.message||`HTTP ${queueRes.status}`); }
     const build = await queueRes.json();
