@@ -196,7 +196,7 @@
   /* OPERATIONS PANEL */
   .ops-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:2rem; }
   .ops-overlay.open { display:flex; }
-  .ops-box { background:var(--surface); border:1px solid var(--border-h); border-radius:16px; width:min(1080px,97vw); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
+  .ops-box { background:var(--surface); border:1px solid var(--border-h); border-radius:16px; width:min(1300px,98vw); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
   .ops-hdr { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.5rem; border-bottom:1px solid var(--border); flex-shrink:0; }
   .ops-title { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
   .ops-body { padding:1.25rem 1.5rem; overflow-y:auto; display:flex; flex-direction:column; gap:1.25rem; }
@@ -467,7 +467,10 @@
           <button class="panel-close" onclick="closeOpsPanel()">✕</button>
         </div>
       </div>
-      <div class="ops-body">
+      <div class="ops-body" style="flex-direction:row;align-items:flex-start;gap:1.25rem;padding:1.25rem 1.5rem;overflow-y:auto;">
+
+        <!-- LEFT: Operations -->
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1.25rem;">
         <div class="ops-grid">
 
           <!-- OP 1: Disconnect Users on RDS -->
@@ -480,12 +483,15 @@
             </div>
             <div class="ops-field">
               <label>Remote Machine <span class="req">*</span></label>
-              <select id="ops-0-RemoteMachine"
+              <select id="ops-0-RemoteMachine" onchange="toggleDisconnectOther()"
                 style="width:100%;padding:8px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'DM Mono',monospace;cursor:pointer;">
                 <option value="">— Select a machine —</option>
                 <option value="VA802655">VA802655</option>
                 <option value="VA700637">VA700637</option>
+                <option value="__other__">Otro (custom)</option>
               </select>
+              <input type="text" id="ops-0-RemoteMachine-other" placeholder="Enter machine name..."
+                style="display:none;width:100%;margin-top:6px;padding:8px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'DM Mono',monospace;"/>
             </div>
             <div class="ops-field">
               <label>Target User <span class="req">*</span></label>
@@ -584,10 +590,51 @@
             <div class="ops-status" id="ops-status-2"></div>
           </div>
 
-        </div>
-      </div>
-    </div>
-  </div>
+        </div><!-- /ops-grid -->
+        </div><!-- /left column -->
+
+        <!-- RIGHT: Machine Reference Sidebar -->
+        <div style="width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;position:sticky;top:0;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted2);padding-bottom:6px;border-bottom:1px solid var(--border);">🖥️ Machine Reference</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px;background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:var(--info);">WC = Worksoft Certify</span>
+            <span style="font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);color:var(--purple);">TT = Tricentis Tosca</span>
+            <span style="font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px;background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.3);color:var(--warn);">RDS = Remote Desktop</span>
+          </div>
+
+          <!-- AMZ VMs -->
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+            <div style="padding:6px 12px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted2);border-bottom:1px solid var(--border);background:var(--surface);">AMZ Automation VMs</div>
+            <div style="overflow-y:auto;max-height:310px;">
+              <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:'DM Mono',monospace;">
+                <thead><tr style="background:var(--surface);">
+                  <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">Host</th>
+                  <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">VA Code</th>
+                  <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">Tool</th>
+                  <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">Type</th>
+                </tr></thead>
+                <tbody id="ref-amz-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Infrastructure -->
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+            <div style="padding:6px 12px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted2);border-bottom:1px solid var(--border);background:var(--surface);">Infrastructure Servers</div>
+            <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:'DM Mono',monospace;">
+              <thead><tr style="background:var(--surface);">
+                <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">Role</th>
+                <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">VA Code</th>
+                <th style="padding:4px 8px;text-align:left;color:var(--muted);font-size:10px;font-weight:500;border-bottom:1px solid var(--border);">Type</th>
+              </tr></thead>
+              <tbody id="ref-infra-body"></tbody>
+            </table>
+          </div>
+        </div><!-- /right sidebar -->
+
+      </div><!-- /ops-body -->
+    </div><!-- /ops-box -->
+  </div><!-- /ops-overlay -->
 
   <!-- LEGACY PANEL (kept for internal compatibility) -->
   <div class="panel-overlay" id="panel-overlay" style="display:none!important;"></div>
@@ -2032,9 +2079,79 @@ const OPS_CONFIG = [
 // Store resolved pipeline IDs per operation
 const _opsPipelineIds = [null, null, null];
 
+const AMZ_MACHINES = [
+  {host:'AMZ01', va:'VA103066', tool:'WC',     type:'VM'},
+  {host:'AMZ02', va:'VA103526', tool:'WC',     type:'VM'},
+  {host:'AMZ03', va:'VA103527', tool:'WC',     type:'VM'},
+  {host:'AMZ04', va:'VA103520', tool:'WC',     type:'VM'},
+  {host:'AMZ05', va:'VA103534', tool:'WC',     type:'VM'},
+  {host:'AMZ06', va:'VA103536', tool:'WC',     type:'VM'},
+  {host:'AMZ07', va:'VA103067', tool:'WC',     type:'VM'},
+  {host:'AMZ08', va:'VA103068', tool:'WC',     type:'VM'},
+  {host:'AMZ09', va:'VA103069', tool:'WC',     type:'VM'},
+  {host:'AMZ10', va:'VA103070', tool:'WC',     type:'VM'},
+  {host:'AMZ11', va:'VA103071', tool:'WC',     type:'VM'},
+  {host:'AMZ12', va:'VA108522', tool:'WC',     type:'VM'},
+  {host:'AMZ13', va:'VA108591', tool:'WC',     type:'VM'},
+  {host:'AMZ14', va:'VA108592', tool:'WC',     type:'VM'},
+  {host:'AMZ15', va:'VA108593', tool:'WC',     type:'VM'},
+  {host:'AMZ16', va:'VA108594', tool:'WC',     type:'VM'},
+  {host:'AMZ17', va:'VA108595', tool:'WC',     type:'VM'},
+  {host:'AMZ18', va:'VA700635', tool:'TT',     type:'VM'},
+  {host:'AMZ19', va:'VA700636', tool:'WC',     type:'VM'},
+  {host:'AMZ21', va:'VA700638', tool:'TT',     type:'VM'},
+  {host:'AMZ22', va:'VA700639', tool:'TT',     type:'VM'},
+  {host:'AMZ23', va:'VA700640', tool:'TT',     type:'VM'},
+  {host:'AMZ24', va:'VA700641', tool:'TT',     type:'VM'},
+  {host:'AMZ25', va:'VA700642', tool:'WC',     type:'VM'},
+];
+
+const INFRA_MACHINES = [
+  {role:'RDS A',     va:'VA802655', type:'RDS'},
+  {role:'DB A',      va:'VD105266', type:'DB'},
+  {role:'RDS B',     va:'VA802638', type:'RDS'},
+  {role:'DB B',      va:'VD515222', type:'DB'},
+  {role:'RDS STG',   va:'VA802635', type:'RDS'},
+  {role:'DB STG',    va:'VD106266', type:'DB'},
+  {role:'DB TOSCA',  va:'VD800636', type:'DB'},
+  {role:'RDS TT',    va:'VA700637', type:'RDS'},
+];
+
+function initMachineReference() {
+  const amzBody   = document.getElementById('ref-amz-body');
+  const infraBody = document.getElementById('ref-infra-body');
+  if (!amzBody || amzBody.children.length > 0) return;
+
+  const toolColor = t => t === 'WC' ? 'var(--info)' : t === 'TT' ? 'var(--purple)' : 'var(--muted2)';
+  const toolBg    = t => t === 'WC' ? 'rgba(96,165,250,.12)' : t === 'TT' ? 'rgba(167,139,250,.12)' : 'rgba(107,114,128,.1)';
+  const typeBadge = t => {
+    if (t === 'RDS') return `<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:var(--warn);">RDS</span>`;
+    if (t === 'DB')  return `<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:var(--err);">DB</span>`;
+    return `<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(74,222,128,.10);border:1px solid rgba(74,222,128,.25);color:var(--ok);">VM</span>`;
+  };
+
+  AMZ_MACHINES.forEach(m => {
+    amzBody.insertAdjacentHTML('beforeend', `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:4px 8px;color:var(--muted2);">${m.host}</td>
+      <td style="padding:4px 8px;color:var(--text);font-weight:500;">${m.va}</td>
+      <td style="padding:4px 8px;"><span style="font-size:9px;padding:1px 6px;border-radius:3px;background:${toolBg(m.tool)};border:1px solid ${toolColor(m.tool)}33;color:${toolColor(m.tool)};font-weight:600;">${m.tool}</span></td>
+      <td style="padding:4px 8px;">${typeBadge(m.type)}</td>
+    </tr>`);
+  });
+
+  INFRA_MACHINES.forEach(m => {
+    infraBody.insertAdjacentHTML('beforeend', `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:4px 8px;color:var(--muted2);">${m.role}</td>
+      <td style="padding:4px 8px;color:var(--text);font-weight:500;">${m.va}</td>
+      <td style="padding:4px 8px;">${typeBadge(m.type)}</td>
+    </tr>`);
+  });
+}
+
 function openOpsPanel() {
   document.getElementById('ops-overlay').classList.add('open');
   initSapComputerList();
+  initMachineReference();
   resolveOpsPipelines();
 }
 function closeOpsPanel() { document.getElementById('ops-overlay').classList.remove('open'); }
@@ -2142,6 +2259,18 @@ function getSapComputerNames() {
   }).join(', ');
 }
 
+function toggleDisconnectOther() {
+  const sel   = document.getElementById('ops-0-RemoteMachine');
+  const other = document.getElementById('ops-0-RemoteMachine-other');
+  if (sel.value === '__other__') {
+    other.style.display = 'block';
+    other.focus();
+  } else {
+    other.style.display = 'none';
+    other.value = '';
+  }
+}
+
 function toggleTaskKillOther() {
   const sel   = document.getElementById('ops-1-RemoteMachine-select');
   const other = document.getElementById('ops-1-RemoteMachine-other');
@@ -2176,7 +2305,12 @@ async function runOperation(idx) {
   const varOverrides = {};
   for (const varName of op.vars) {
     let val = '';
-    if (idx === 1 && varName === 'RemoteMachine') {
+    if (idx === 0 && varName === 'RemoteMachine') {
+      const sel = document.getElementById('ops-0-RemoteMachine');
+      val = sel.value === '__other__'
+        ? (document.getElementById('ops-0-RemoteMachine-other').value || '').trim()
+        : sel.value;
+    } else if (idx === 1 && varName === 'RemoteMachine') {
       val = getTaskKillMachine();
     } else if (idx === 2 && varName === 'ComputerNames') {
       val = getSapComputerNames();
