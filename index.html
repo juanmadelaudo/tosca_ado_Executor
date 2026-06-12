@@ -493,9 +493,14 @@
               <input type="text" id="ops-0-RemoteMachine-other" placeholder="Enter machine name..."
                 style="display:none;width:100%;margin-top:6px;padding:8px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'DM Mono',monospace;"/>
             </div>
-            <div class="ops-field">
+            <div class="ops-field" style="position:relative;">
               <label>Target User <span class="req">*</span></label>
-              <input type="text" id="ops-0-TargetUser" placeholder="e.g. domain\username"/>
+              <input type="text" id="ops-0-TargetUser" placeholder="Type to search user..."
+                autocomplete="off"
+                oninput="filterTargetUsers(this.value)"
+                onblur="setTimeout(()=>closeTargetUserDrop(),150)"
+                style="width:100%;"/>
+              <div id="tu-drop" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 2px);background:var(--surface);border:1px solid var(--border-h);border-radius:8px;z-index:400;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.4);"></div>
             </div>
             <button class="ops-run-btn" id="ops-run-0" onclick="runOperation(0)" disabled>
               ▶ Run Operation
@@ -2257,6 +2262,44 @@ function getSapComputerNames() {
     const cb = document.getElementById(`sap-cb-${n}`);
     return cb && cb.checked;
   }).join(', ');
+}
+
+const TARGET_USERS = [
+  'e.arslan.mir','victor.d.nicolao','g.juarez.centurion','mohamed.david.mena',
+  'ofelia.m.bonifacio','maximiliano.pinto','ramiro.gordo','gaston.bazan',
+  'claudia.cabrera','jesica.guerrero','uriel.neer','sabrina.meritano',
+  'ignacio.debortoli','mithili.lakshmipathi','Tirakayya Hiremath, Shridevi',
+  'Vishaka','Vanaja','Logesh','smita','Swapan','Charu','Jeelan',
+  'juan.manuel.delaudo','javier.tomas','federico.bernal','andres.l.heredia',
+  'joven.m.margate','jellaine.r.javier','Nitish.pasumarti'
+];
+
+function filterTargetUsers(q) {
+  const drop = document.getElementById('tu-drop');
+  if (!q) { drop.style.display = 'none'; return; }
+  const ql = q.toLowerCase();
+  const matches = TARGET_USERS.filter(u => u.toLowerCase().includes(ql));
+  if (!matches.length) { drop.style.display = 'none'; return; }
+  drop.innerHTML = matches.map(u => {
+    const idx = u.toLowerCase().indexOf(ql);
+    const hi  = esc(u.slice(0,idx))
+              + `<strong style="color:var(--accent);">${esc(u.slice(idx,idx+q.length))}</strong>`
+              + esc(u.slice(idx+q.length));
+    return `<div onmousedown="selectTargetUser('${u.replace(/'/g,"\\'")}')"
+      style="padding:7px 12px;font-size:12px;font-family:'DM Mono',monospace;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);"
+      onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">${hi}</div>`;
+  }).join('');
+  drop.style.display = 'block';
+}
+
+function selectTargetUser(name) {
+  document.getElementById('ops-0-TargetUser').value = name;
+  closeTargetUserDrop();
+}
+
+function closeTargetUserDrop() {
+  const drop = document.getElementById('tu-drop');
+  if (drop) drop.style.display = 'none';
 }
 
 function toggleDisconnectOther() {
