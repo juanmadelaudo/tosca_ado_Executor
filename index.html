@@ -190,6 +190,28 @@
   .btn-panel:hover:not(:disabled) { background:rgba(167,139,250,.2); }
   .btn-execs { background:rgba(251,191,36,.10); border-color:rgba(251,191,36,.3); color:var(--warn); }
   .btn-execs:hover:not(:disabled) { background:rgba(251,191,36,.2); }
+  .btn-ops { background:rgba(52,211,153,.10); border-color:rgba(52,211,153,.3); color:#34d399; }
+  .btn-ops:hover:not(:disabled) { background:rgba(52,211,153,.2); }
+
+  /* OPERATIONS PANEL */
+  .ops-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; display:none; align-items:flex-start; justify-content:center; padding-top:2rem; }
+  .ops-overlay.open { display:flex; }
+  .ops-box { background:var(--surface); border:1px solid var(--border-h); border-radius:16px; width:min(1080px,97vw); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
+  .ops-hdr { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.5rem; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .ops-title { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .ops-body { padding:1.25rem 1.5rem; overflow-y:auto; display:flex; flex-direction:column; gap:1.25rem; }
+  .ops-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.25rem; }
+  .ops-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; display:flex; flex-direction:column; gap:10px; }
+  .ops-card-title { font-size:13px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:7px; }
+  .ops-card-desc { font-size:11px; font-family:'DM Mono',monospace; color:var(--muted2); line-height:1.5; }
+  .ops-field label { font-size:10px; letter-spacing:.7px; text-transform:uppercase; color:var(--muted2); font-weight:500; display:block; margin-bottom:4px; }
+  .ops-field input { width:100%; padding:8px 11px; border-radius:7px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:12px; font-family:'DM Mono',monospace; }
+  .ops-field input:focus { outline:none; border-color:rgba(52,211,153,.5); box-shadow:0 0 0 3px rgba(52,211,153,.1); }
+  .ops-run-btn { margin-top:4px; padding:9px 14px; border-radius:8px; border:1px solid rgba(52,211,153,.35); background:rgba(52,211,153,.12); color:#34d399; font-size:12px; font-family:'DM Mono',monospace; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .ops-run-btn:hover:not(:disabled) { background:rgba(52,211,153,.22); }
+  .ops-run-btn:disabled { opacity:.45; cursor:not-allowed; }
+  .ops-status { font-size:11px; font-family:'DM Mono',monospace; min-height:14px; }
+  .ops-pipeline-ref { font-size:10px; font-family:'DM Mono',monospace; color:var(--muted2); padding:5px 9px; background:var(--surface); border-radius:5px; border:1px solid var(--border); display:flex; align-items:center; gap:5px; }
 
   /* EXEC TABLE */
   .exec-table { width:100%; border-collapse:collapse; font-size:12px; font-family:'DM Mono',monospace; }
@@ -252,6 +274,9 @@
       </button>
       <button id="btn-nav-execs" onclick="openExecutionsPanel()" class="btn-execs" style="flex:1;min-width:160px;justify-content:center;padding:12px 20px;font-size:13px;">
         🕐 Last Executions
+      </button>
+      <button id="btn-nav-ops" onclick="openOpsPanel()" class="btn-ops" style="flex:1;min-width:160px;justify-content:center;padding:12px 20px;font-size:13px;">
+        🖥️ Operations Monitor
       </button>
     </div>
   </div>
@@ -429,6 +454,138 @@
         <button onclick="closeNtPopup()" style="flex:1;justify-content:center;">↩ Choose another name</button>
       </div>
       <div class="nt-run-status" id="nt-run-status"></div>
+    </div>
+  </div>
+
+  <!-- OPERATIONS MONITOR PANEL -->
+  <div class="ops-overlay" id="ops-overlay" onclick="maybeCloseOpsPanel(event)">
+    <div class="ops-box">
+      <div class="ops-hdr">
+        <span class="ops-title">🖥️ Operations Monitor</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted2);">Run remote operations on Azure DevOps pipelines</span>
+          <button class="panel-close" onclick="closeOpsPanel()">✕</button>
+        </div>
+      </div>
+      <div class="ops-body">
+        <div class="ops-grid">
+
+          <!-- OP 1: Disconnect Users on RDS -->
+          <div class="ops-card">
+            <div class="ops-card-title">🔌 Disconnect Users on RDS</div>
+            <div class="ops-card-desc">Disconnects active user sessions on a Remote Desktop Server.</div>
+            <div class="ops-pipeline-ref" id="ops-ref-0">
+              <span class="spinner" style="width:10px;height:10px;border-width:2px;"></span>
+              <span id="ops-ref-label-0">Looking up pipeline...</span>
+            </div>
+            <div class="ops-field">
+              <label>Remote Machine <span class="req">*</span></label>
+              <select id="ops-0-RemoteMachine"
+                style="width:100%;padding:8px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'DM Mono',monospace;cursor:pointer;">
+                <option value="">— Select a machine —</option>
+                <option value="VA802655">VA802655</option>
+                <option value="VA700637">VA700637</option>
+              </select>
+            </div>
+            <div class="ops-field">
+              <label>Target User <span class="req">*</span></label>
+              <input type="text" id="ops-0-TargetUser" placeholder="e.g. domain\username"/>
+            </div>
+            <button class="ops-run-btn" id="ops-run-0" onclick="runOperation(0)" disabled>
+              ▶ Run Operation
+            </button>
+            <div class="ops-status" id="ops-status-0"></div>
+          </div>
+
+          <!-- OP 2: Task Kill in Remote Server -->
+          <div class="ops-card">
+            <div class="ops-card-title">⚡ Task Kill in Remote Server</div>
+            <div class="ops-card-desc">Terminates running tasks/processes on a remote server.</div>
+            <div class="ops-pipeline-ref" id="ops-ref-1">
+              <span class="spinner" style="width:10px;height:10px;border-width:2px;"></span>
+              <span id="ops-ref-label-1">Looking up pipeline...</span>
+            </div>
+            <div class="ops-field">
+              <label>Remote Machine <span class="req">*</span></label>
+              <select id="ops-1-RemoteMachine-select" onchange="toggleTaskKillOther()"
+                style="width:100%;padding:8px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'DM Mono',monospace;cursor:pointer;">
+                <option value="">— Select a machine —</option>
+                <option value="VA802655">VA802655</option>
+                <option value="VA802638">VA802638</option>
+                <option value="VA103066">VA103066</option>
+                <option value="VA103526">VA103526</option>
+                <option value="VA103527">VA103527</option>
+                <option value="VA103520">VA103520</option>
+                <option value="VA103534">VA103534</option>
+                <option value="VA103536">VA103536</option>
+                <option value="VA103067">VA103067</option>
+                <option value="VA103068">VA103068</option>
+                <option value="VA103069">VA103069</option>
+                <option value="VA103070">VA103070</option>
+                <option value="VA103071">VA103071</option>
+                <option value="VA108522">VA108522</option>
+                <option value="VA108591">VA108591</option>
+                <option value="VA108592">VA108592</option>
+                <option value="VA108593">VA108593</option>
+                <option value="VA108594">VA108594</option>
+                <option value="VA108595">VA108595</option>
+                <option value="VA700635">VA700635</option>
+                <option value="VA700636">VA700636</option>
+                <option value="VA700637">VA700637</option>
+                <option value="VA700638">VA700638</option>
+                <option value="VA700639">VA700639</option>
+                <option value="VA700640">VA700640</option>
+                <option value="VA700641">VA700641</option>
+                <option value="VA700642">VA700642</option>
+                <option value="__other__">Otro (custom)</option>
+              </select>
+              <input type="text" id="ops-1-RemoteMachine-other" placeholder="Enter machine name..."
+                style="display:none;width:100%;margin-top:6px;padding:8px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'DM Mono',monospace;"/>
+            </div>
+            <button class="ops-run-btn" id="ops-run-1" onclick="runOperation(1)" disabled>
+              ▶ Run Operation
+            </button>
+            <div class="ops-status" id="ops-status-1"></div>
+          </div>
+
+          <!-- OP 3: Update SAP Environment -->
+          <div class="ops-card">
+            <div class="ops-card-title">🔄 Update SAP Environment List</div>
+            <div class="ops-card-desc">Updates SAP environment list values in a remote machine.</div>
+            <div class="ops-pipeline-ref" id="ops-ref-2">
+              <span class="spinner" style="width:10px;height:10px;border-width:2px;"></span>
+              <span id="ops-ref-label-2">Looking up pipeline...</span>
+            </div>
+
+            <div class="ops-field">
+              <label>Computer Names <span class="req">*</span>
+                <span id="ops-2-count" style="margin-left:6px;font-size:10px;color:var(--muted2);font-weight:400;"></span>
+              </label>
+              <div style="display:flex;gap:6px;margin-bottom:6px;">
+                <button type="button" onclick="sapSelectAll(true)" style="font-size:10px;padding:2px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);font-family:'DM Mono',monospace;">✓ All</button>
+                <button type="button" onclick="sapSelectAll(false)" style="font-size:10px;padding:2px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);font-family:'DM Mono',monospace;">✗ None</button>
+              </div>
+              <div id="ops-2-computers" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;padding:8px;background:var(--surface);border:1px solid var(--border);border-radius:7px;">
+              </div>
+              <div id="ops-2-ComputerNames-preview" style="margin-top:5px;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted2);word-break:break-all;"></div>
+            </div>
+
+            <div class="ops-field">
+              <label>SAP Value <span class="req">*</span></label>
+              <input type="text" id="ops-2-SAPValue" placeholder="e.g. PRD"/>
+            </div>
+            <div class="ops-field">
+              <label>SAP Build Value <span class="req">*</span></label>
+              <input type="text" id="ops-2-SAPBuildValue" placeholder="e.g. 7.00.123"/>
+            </div>
+            <button class="ops-run-btn" id="ops-run-2" onclick="runOperation(2)" disabled>
+              ▶ Run Operation
+            </button>
+            <div class="ops-status" id="ops-status-2"></div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 
@@ -674,7 +831,7 @@ function buildClassicSummary(vars){
     '2 · PublishTestResults@2 — Publish Test Results',
     '3 · CopyFiles@2 — Copy to staging directory [always]',
     '4 · PublishBuildArtifacts@1 — Publish Artifact [always]',
-    '5 · EmailReportV2@2 — Send Email Report → '+vars.requestor+' [always]',
+    '5 · EmailReportV2@2 — Send Email Report → '+vars.requestor+' [succeededOrFailed]',
   ];
   return `
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
@@ -821,6 +978,41 @@ async function createClassicPipeline(org,project){
   const processArea=v('processArea');
   const requestor=v('requestor');
   const folderPath=v('folderPath')||'c:\\tempresults\\results';
+  // ── Resolve EmailReport task GUID dynamically ──
+  let emailReportTaskId = null;
+  try {
+    const tasksRes = await fetch(
+      `https://dev.azure.com/${enc(org)}/_apis/distributedtask/tasks?api-version=7.0`,
+      { headers: authHeader() }
+    );
+    if (tasksRes.ok) {
+      const tasksData = await tasksRes.json();
+      const emailTask = (tasksData.value || []).find(t =>
+        t.name && t.name.toLowerCase().includes('emailreport') &&
+        t.version && t.version.major === 2
+      );
+      if (emailTask) emailReportTaskId = emailTask.id;
+    }
+  } catch(e) { /* non-blocking — skip task if not found */ }
+  logLine(`   ${emailReportTaskId ? '✓ EmailReport task found: ' + emailReportTaskId : '⚠ EmailReport task not found — step will be skipped'}`, emailReportTaskId ? 'log-ok' : 'log-warn');
+
+  const emailReportStep = emailReportTaskId ? [{
+    task:{id: emailReportTaskId, versionSpec:'2.*', definitionType:'task'},
+    displayName:'Send Email Report',
+    condition:'succeededOrFailed()',
+    enabled:true,
+    inputs:{
+      subject:'$(Build.DefinitionName) {passPercentage} tests passed',
+      toAddress:'$(Requestor)',
+      ccAddress:'CIO.SAP.Automate.Test.ExecutionTeam@accenture.com',
+      defaultDomain:'automated.testresult@accenture.com',
+      includeResultsStr:'1,2',
+      includeCommits:'false',
+      enableTLS:'false',
+      smtpConnectionEndpoint:'CIO SAP AUTOMATION'
+    }
+  }] : [];
+
   const resultFile=v('resultFileName')||'';
 
   // Classic pipeline body — process.type=1
@@ -889,7 +1081,8 @@ async function createClassicPipeline(org,project){
             condition:'always()',
             enabled:true,
             inputs:{ArtifactName:'Evidence $(ResultFileName)'}
-          }
+          },
+          ...emailReportStep
         ]
       }]
     },
@@ -922,9 +1115,8 @@ function buildVarDefs(){
 
 function showResult(org,project,created,extra){
   setStep(4);
-  window._lastCreated = created;
-  window._lastOrg = org;
-  window._lastProject = project;
+  const _ctx = { created, org, project };
+  window._pipelineCtx = _ctx;
   document.getElementById('result-area').innerHTML=`
     <div class="result-card" id="created-card">
       <div class="result-title">✓ Pipeline created successfully</div>
@@ -947,7 +1139,7 @@ function showResult(org,project,created,extra){
 }
 
 async function runPipeline(){
-  const org=window._lastOrg, project=window._lastProject, def=window._lastCreated;
+  const { org, project, created: def } = window._pipelineCtx || {};
   const btn=document.getElementById('btn-run');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Starting execution...';
 
@@ -1055,7 +1247,7 @@ function newPipeline(){
 
 // ── BUILT-IN TEMPLATE ──
 function builtInTemplate(){
-  return `pool:\n  name: CIO Automation23\nvariables:\n  FolderPath: 'c:\\tempresults\\results'\n  ResultFileName: ''\n  UniqueID: ''\n  ProcessArea: ''\n\nsteps:\n- task: PowerShell@2\n  displayName: 'Execute E2G API'\n  inputs:\n    targetType: filePath\n    filePath: 'tosca_execution_client_v3.ps1'\n    arguments: '-resultsFolderPath "\$(FolderPath)" -resultsFileName "\$(ResultFileName)" -events "[{""eventID"": ""\$(UniqueID)""}]" -characteristics "[{""AgentCharacteristics"":""AgentIdentifier=\$(Agent.MachineName)-A05080DIRPPAMAUTO""}]" -ScriptName "\$(Build.DefinitionName)" -ProcessArea "\$(ProcessArea)"'\n\n- task: PublishTestResults@2\n  displayName: 'Publish Test Results'\n  inputs:\n    testResultsFiles: '\$(ResultFileName)'\n    searchFolder: '\$(FolderPath)'\n    failTaskOnFailedTests: true\n\n- task: CopyFiles@2\n  displayName: 'Copy Files to: \$(build.artifactstagingdirectory)'\n  inputs:\n    SourceFolder: '\$(FolderPath)'\n    Contents: '\$(ResultFileName)'\n    TargetFolder: '\$(build.artifactstagingdirectory)'\n  condition: always()\n\n- task: PublishBuildArtifacts@1\n  displayName: 'Publish Artifact'\n  inputs:\n    ArtifactName: 'Evidence \$(ResultFileName)'\n  condition: always()\n\n- task: epsteam.EmailReportExtension.EmailReport.EmailReportV2@2\n  displayName: 'Send Email Report'\n  inputs:\n    subject: '\$(Build.DefinitionName) {passPercentage} tests passed'\n    toAddress: '\$(Requestor)'\n    ccAddress: 'CIO.SAP.Automate.Test.ExecutionTeam@accenture.com'\n    defaultDomain: 'automated.testresult@accenture.com'\n    includeResultsStr: '1,2'\n    includeCommits: false\n    enableTLS: false\n    smtpConnectionEndpoint: 'CIO SAP AUTOMATION'\n  condition: always()\n`;
+  return `pool:\n  name: CIO Automation23\nvariables:\n  FolderPath: 'c:\\tempresults\\results'\n  ResultFileName: ''\n  UniqueID: ''\n  ProcessArea: ''\n  Requestor: ''\n\nsteps:\n- task: PowerShell@2\n  displayName: 'Execute E2G API'\n  inputs:\n    targetType: filePath\n    filePath: 'tosca_execution_client_v3.ps1'\n    arguments: '-resultsFolderPath "\$(FolderPath)" -resultsFileName "\$(ResultFileName)" -events "[{""eventID"": ""\$(UniqueID)""}]" -characteristics "[{""AgentCharacteristics"":""AgentIdentifier=\$(Agent.MachineName)-A05080DIRPPAMAUTO""}]" -ScriptName "\$(Build.DefinitionName)" -ProcessArea "\$(ProcessArea)"'\n\n- task: PublishTestResults@2\n  displayName: 'Publish Test Results'\n  inputs:\n    testResultsFiles: '\$(ResultFileName)'\n    searchFolder: '\$(FolderPath)'\n    failTaskOnFailedTests: true\n\n- task: CopyFiles@2\n  displayName: 'Copy Files to: \$(build.artifactstagingdirectory)'\n  inputs:\n    SourceFolder: '\$(FolderPath)'\n    Contents: '\$(ResultFileName)'\n    TargetFolder: '\$(build.artifactstagingdirectory)'\n  condition: always()\n\n- task: PublishBuildArtifacts@1\n  displayName: 'Publish Artifact'\n  inputs:\n    ArtifactName: 'Evidence \$(ResultFileName)'\n  condition: always()\n\n- task: epsteam.EmailReportExtension.EmailReport.EmailReportV2@2\n  displayName: 'Send Email Report'\n  inputs:\n    subject: '\$(Build.DefinitionName) {passPercentage} tests passed'\n    toAddress: '\$(Requestor)'\n    ccAddress: 'CIO.SAP.Automate.Test.ExecutionTeam@accenture.com'\n    defaultDomain: 'automated.testresult@accenture.com'\n    includeResultsStr: '1,2'\n    includeCommits: false\n    enableTLS: false\n    smtpConnectionEndpoint: 'CIO SAP AUTOMATION'\n  condition: succeededOrFailed()\n`;
 }
 
 function syntaxHighlight(yaml){
@@ -1209,9 +1401,7 @@ function openAcDrop(items, query) {
     const badge = exact
       ? `<span class="ac-exact">● exact match</span>`
       : `<span class="ac-id">#${p.id}</span>`;
-    // Safe name for onclick attr: escape quotes
-    const safeName = p.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return `<div class="name-ac-item" data-idx="${i}" onmousedown="selectAcItem(event,'${safeName}',${p.id})">
+    return `<div class="name-ac-item" data-idx="${i}" data-name="${esc(p.name)}" data-id="${p.id}" onmousedown="selectAcItem(event)">
       <span class="ac-name" title="${esc(p.name)}">${highlightMatch(p.name, query)}</span>
       ${badge}
     </div>`;
@@ -1237,8 +1427,11 @@ function highlightMatch(name, query) {
     esc(name.slice(idx + query.length));
 }
 
-function selectAcItem(e, name, id) {
+function selectAcItem(e) {
   e.preventDefault();
+  const el   = e.currentTarget;
+  const name = el.getAttribute('data-name');
+  const id   = parseInt(el.getAttribute('data-id'), 10);
   const inp  = document.getElementById('pipelineName');
   const hint = document.getElementById('name-hint');
   inp.value = name;
@@ -1817,6 +2010,260 @@ async function execCancel(buildId, btn) {
   }
 }
 
+// ── OPERATIONS MONITOR ──
+const OPS_CONFIG = [
+  {
+    key: 'DisconnectUsersOnRDS',
+    searchName: 'DisconnectUsersOnRDS',
+    vars: ['RemoteMachine', 'TargetUser']
+  },
+  {
+    key: 'TaskKillRemoteServer',
+    searchName: 'Task Kill',
+    vars: ['RemoteMachine']
+  },
+  {
+    key: 'UpdateSAPEnvironment',
+    searchName: 'Update SAP Environment',
+    vars: ['ComputerNames', 'SAPValue', 'SAPBuildValue']
+  }
+];
+
+// Store resolved pipeline IDs per operation
+const _opsPipelineIds = [null, null, null];
+
+function openOpsPanel() {
+  document.getElementById('ops-overlay').classList.add('open');
+  initSapComputerList();
+  resolveOpsPipelines();
+}
+function closeOpsPanel() { document.getElementById('ops-overlay').classList.remove('open'); }
+function maybeCloseOpsPanel(e) { if (e.target === document.getElementById('ops-overlay')) closeOpsPanel(); }
+
+async function resolveOpsPipelines() {
+  const org = v('org'), project = v('project');
+  for (let i = 0; i < OPS_CONFIG.length; i++) {
+    const op = OPS_CONFIG[i];
+    const refEl   = document.getElementById(`ops-ref-${i}`);
+    const labelEl = document.getElementById(`ops-ref-label-${i}`);
+    const runBtn  = document.getElementById(`ops-run-${i}`);
+    try {
+      const res = await fetch(
+        `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/definitions?name=*${enc(op.searchName)}*&$top=5&api-version=7.0`,
+        { headers: authHeader() }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const defs = (await res.json()).value || [];
+      if (defs.length === 0) throw new Error('Pipeline not found');
+      _opsPipelineIds[i] = defs[0].id;
+      refEl.style.borderColor   = 'rgba(52,211,153,.3)';
+      refEl.style.background    = 'rgba(52,211,153,.06)';
+      labelEl.innerHTML = `✓ <a href="https://dev.azure.com/${enc(org)}/${enc(project)}/_build?definitionId=${defs[0].id}" target="_blank" style="color:#34d399;text-decoration:none;">${esc(defs[0].name)} #${defs[0].id} ↗</a>`;
+      runBtn.disabled = false;
+    } catch(e) {
+      _opsPipelineIds[i] = null;
+      refEl.style.borderColor = 'rgba(248,113,113,.3)';
+      refEl.style.background  = 'rgba(248,113,113,.06)';
+      labelEl.innerHTML = `✗ ${esc(e.message)} — pipeline not found`;
+      runBtn.disabled = true;
+    }
+  }
+}
+
+const SAP_COMPUTERS = [
+  'VA802655','VD105266','VA802638','VA103066','VA103526','VA103527',
+  'VA103520','VA103534','VA103536','VA103067','VA103068','VA103069',
+  'VA103070','VA103071','VA108522','VA108591','VA108592','VA108593',
+  'VA108594','VA108595','VA700635','VA700636','VA700637','VA700638',
+  'VA700639','VA700640','VA700641','VA700642'
+];
+
+function initSapComputerList() {
+  const container = document.getElementById('ops-2-computers');
+  if (!container || container.children.length > 0) return;
+  SAP_COMPUTERS.forEach(name => {
+    const label = document.createElement('label');
+    label.id = `sap-label-${name}`;
+    label.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:11px;font-family:"DM Mono",monospace;color:var(--text);cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);transition:all .15s;';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = name;
+    cb.id = `sap-cb-${name}`;
+    cb.style.cssText = 'accent-color:#34d399;cursor:pointer;width:13px;height:13px;flex-shrink:0;';
+    cb.addEventListener('change', () => {
+      updateSapPreview();
+      updateSapLabelStyle(name, cb.checked);
+    });
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(name));
+    container.appendChild(label);
+  });
+}
+
+function updateSapLabelStyle(name, checked) {
+  const label = document.getElementById(`sap-label-${name}`);
+  if (!label) return;
+  if (checked) {
+    label.style.background    = 'rgba(52,211,153,.14)';
+    label.style.borderColor   = 'rgba(52,211,153,.5)';
+    label.style.color         = '#34d399';
+    label.style.fontWeight    = '600';
+  } else {
+    label.style.background    = 'var(--surface2)';
+    label.style.borderColor   = 'var(--border)';
+    label.style.color         = 'var(--text)';
+    label.style.fontWeight    = '400';
+  }
+}
+
+function updateSapPreview() {
+  const selected = SAP_COMPUTERS.filter(n => {
+    const cb = document.getElementById(`sap-cb-${n}`);
+    return cb && cb.checked;
+  });
+  const countEl   = document.getElementById('ops-2-count');
+  const previewEl = document.getElementById('ops-2-ComputerNames-preview');
+  if (countEl) countEl.textContent = selected.length ? `(${selected.length} selected)` : '';
+  if (previewEl) previewEl.textContent = selected.length ? 'Value: ' + selected.join(', ') : '';
+}
+
+function sapSelectAll(checked) {
+  SAP_COMPUTERS.forEach(n => {
+    const cb = document.getElementById(`sap-cb-${n}`);
+    if (cb) { cb.checked = checked; updateSapLabelStyle(n, checked); }
+  });
+  updateSapPreview();
+}
+
+function getSapComputerNames() {
+  return SAP_COMPUTERS.filter(n => {
+    const cb = document.getElementById(`sap-cb-${n}`);
+    return cb && cb.checked;
+  }).join(', ');
+}
+
+function toggleTaskKillOther() {
+  const sel   = document.getElementById('ops-1-RemoteMachine-select');
+  const other = document.getElementById('ops-1-RemoteMachine-other');
+  if (sel.value === '__other__') {
+    other.style.display = 'block';
+    other.focus();
+  } else {
+    other.style.display = 'none';
+    other.value = '';
+  }
+}
+
+// Helper: get resolved RemoteMachine value for Task Kill (op index 1)
+function getTaskKillMachine() {
+  const sel = document.getElementById('ops-1-RemoteMachine-select');
+  if (!sel) return '';
+  if (sel.value === '__other__') {
+    return (document.getElementById('ops-1-RemoteMachine-other').value || '').trim();
+  }
+  return sel.value;
+}
+
+async function runOperation(idx) {
+  const defId = _opsPipelineIds[idx];
+  if (!defId) return;
+  const op = OPS_CONFIG[idx];
+  const org = v('org'), project = v('project');
+  const btn    = document.getElementById(`ops-run-${idx}`);
+  const status = document.getElementById(`ops-status-${idx}`);
+
+  // Collect variable values
+  const varOverrides = {};
+  for (const varName of op.vars) {
+    let val = '';
+    if (idx === 1 && varName === 'RemoteMachine') {
+      val = getTaskKillMachine();
+    } else if (idx === 2 && varName === 'ComputerNames') {
+      val = getSapComputerNames();
+    } else {
+      val = (document.getElementById(`ops-${idx}-${varName}`) || {}).value?.trim() || '';
+    }
+    if (!val) {
+      status.innerHTML = opsStatus('err', `⚠ ${varName} is required`);
+      return;
+    }
+    varOverrides[varName] = val;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Starting...';
+  status.innerHTML = '';
+
+  try {
+    // Build variables override in correct Azure DevOps format
+    const variables = {};
+    for (const [k, val] of Object.entries(varOverrides)) {
+      variables[k] = { value: val, allowOverride: true };
+    }
+
+    const queueRes = await fetch(
+      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds?api-version=7.0`,
+      {
+        method: 'POST',
+        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ definition: { id: defId }, variables })
+      }
+    );
+    if (!queueRes.ok) { const e=await queueRes.json().catch(()=>({})); throw new Error(e.message||`HTTP ${queueRes.status}`); }
+    const build = await queueRes.json();
+    const buildUrl = `https://dev.azure.com/${enc(org)}/${enc(project)}/_build/results?buildId=${build.id}`;
+
+    status.innerHTML = opsStatus('running', `Started · Build #${build.id}`, buildUrl);
+    btn.innerHTML = '<span class="spinner"></span> Running...';
+
+    // Poll until complete
+    const maxWait = 3600000, interval = 8000, started = Date.now();
+    while (true) {
+      await new Promise(r => setTimeout(r, interval));
+      if (Date.now() - started > maxWait) {
+        status.innerHTML = opsStatus('warn', 'Timeout — check Azure DevOps', buildUrl);
+        btn.disabled = false; btn.innerHTML = '▶ Run Operation'; break;
+      }
+      try {
+        const r = await fetch(
+          `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/build/builds/${build.id}?api-version=7.0`,
+          { headers: authHeader() }
+        );
+        if (!r.ok) continue;
+        const b = await r.json();
+        const elapsed = Math.round((Date.now()-started)/1000);
+        if (b.status === 'completed') {
+          const res = b.result || 'unknown';
+          if (res === 'succeeded')
+            status.innerHTML = opsStatus('ok',   `✓ Completed · #${build.id} · ${elapsed}s`, buildUrl);
+          else if (res === 'partiallySucceeded')
+            status.innerHTML = opsStatus('warn', `⚠ Partial · #${build.id} · ${elapsed}s`, buildUrl);
+          else
+            status.innerHTML = opsStatus('err',  `✗ ${res} · #${build.id} · ${elapsed}s`, buildUrl);
+          btn.disabled = false; btn.innerHTML = '▶ Run Operation'; break;
+        } else {
+          const elapsed2 = Math.round((Date.now()-started)/1000);
+          status.innerHTML = opsStatus('running', `Running... #${build.id} · ${elapsed2}s`, buildUrl);
+        }
+      } catch(e) { /* transient */ }
+    }
+  } catch(e) {
+    status.innerHTML = opsStatus('err', 'Error: ' + e.message, '');
+    btn.disabled = false; btn.innerHTML = '▶ Run Operation';
+  }
+}
+
+function opsStatus(type, text, url) {
+  const c = {
+    ok:      { color:'var(--ok)',   bg:'rgba(74,222,128,.08)',  border:'rgba(74,222,128,.25)' },
+    err:     { color:'var(--err)',  bg:'rgba(248,113,113,.08)', border:'rgba(248,113,113,.25)' },
+    warn:    { color:'var(--warn)', bg:'rgba(251,191,36,.08)',  border:'rgba(251,191,36,.25)' },
+    running: { color:'var(--info)', bg:'rgba(96,165,250,.08)',  border:'rgba(96,165,250,.25)' },
+  }[type] || {};
+  const link = url ? `<br><a href="${url}" target="_blank" style="color:var(--info);font-size:10px;text-decoration:none;">→ View in Azure DevOps ↗</a>` : '';
+  return `<div style="margin-top:6px;padding:7px 10px;border-radius:7px;background:${c.bg};border:1px solid ${c.border};color:${c.color};font-size:11px;">${esc(text)}${link}</div>`;
+}
+
 // ── LEGACY STUBS (referenced internally) ──
 function showCreateFlow() {
   document.getElementById('card-params').classList.remove('hidden');
@@ -1837,4 +2284,3 @@ function pollFromPanel(){}
 </script>
 </body>
 </html>
- 
