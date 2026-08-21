@@ -682,7 +682,7 @@
     </div>
   </div>
 
-<footer>open locally in your browser · no data is stored · PAT kept in session memory only</footer>
+<footer>no data is stored · PAT kept in session memory only · Azure DevOps API</footer>
 
 <script>
 let isConnected = false;
@@ -694,7 +694,7 @@ let currentMode = 'classic';
 function v(id){ return document.getElementById(id).value.trim(); }
 function enc(s){ return encodeURIComponent(s); }
 function authHeader(){ return {'Authorization':'Basic '+btoa(':'+v('pat'))}; }
-function setMsg(id,text,type){ const e=document.getElementById(id); e.textContent=text; e.className='msg '+type; }
+function setMsg(id,text,type){ const e=document.getElementById(id); e.innerHTML=text; e.className='msg '+type; }
 function setStep(n){ /* stepper removed */ }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function logClear(){ const b=document.getElementById('log-box'); b.innerHTML=''; b.classList.add('show'); }
@@ -714,11 +714,11 @@ async function testConnection(){
   if(!org||!project||!pat){setMsg('conn-msg','Please fill in all fields.','err');return;}
   const btn=document.getElementById('btn-conn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Connecting...';
+
+  const url = `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/git/repositories?api-version=7.0`;
+
   try{
-    const res=await fetch(
-      `https://dev.azure.com/${enc(org)}/${enc(project)}/_apis/git/repositories?api-version=7.0`,
-      {headers:authHeader()}
-    );
+    const res=await fetch(url, {headers:authHeader()});
     if(res.ok){
       isConnected=true;
       const repos=(await res.json()).value;
@@ -730,13 +730,22 @@ async function testConnection(){
       setMsg('conn-msg',`✓ Connection successful${note}`,'ok');
       document.getElementById('top-nav').style.display='flex';
       setStep(2);
-
     } else {
       const e=await res.json().catch(()=>({}));
       setMsg('conn-msg',`Error ${res.status}: ${e.message||'Check your PAT and permissions.'}`, 'err');
     }
   } catch(e){
-    setMsg('conn-msg','Could not connect. Open this file locally in your browser (double-click).','err');
+    const origin = location.protocol === 'file:' ? 'file:// (local file)' : location.origin;
+    setMsg('conn-msg',`
+      <strong>Connection failed</strong> — ${e.message}<br><br>
+      <strong>Diagnostic info:</strong><br>
+      · Origin: <code>${origin}</code><br>
+      · URL: <code>${url}</code><br>
+      · PAT length: <code>${pat.length} chars</code><br><br>
+      <strong>Most likely causes:</strong><br>
+      · PAT expired or incorrect — <a href="https://dev.azure.com/accenturecio23/_usersSettings/tokens" target="_blank" style="color:var(--accent);">check your tokens here ↗</a><br>
+      · Browser blocking request (CORS) — press <kbd style="padding:1px 5px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);">F12</kbd> → Console for exact error
+    `,'err');
   }
   btn.disabled=false; btn.innerHTML='⚡ Test Connection';
 }
@@ -1329,6 +1338,7 @@ function loadFolders() {
   const folders = [
     '\\BASIS',
     '\\CAM',
+    '\\Close',
     '\\CO',
     '\\Demo OTC',
     '\\OTC',
